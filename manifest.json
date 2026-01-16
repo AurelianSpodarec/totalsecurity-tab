@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Total Tabs",
+  "version": "{version}",
+  "background": {
+    "service_worker": "/apps/background/background.min.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "/apps/side_panel/index.html"
+  },
+  "permissions": [
+    "sidePanel",
+    "alarms",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ]
+}
