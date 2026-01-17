@@ -17,19 +17,12 @@ export function TabCard({ tab, onClick, className }: TabCardProps)
   return (
     <div
       className={Html.joinClasses(
-        // Base
         "flex items-center justify-between gap-3",
-        // Color
         tab.active ? "bg-blue-500 dark:bg-blue-500" : "bg-gray-700 dark:bg-gray-700",
-        // Shape
         "rounded",
-        // Spacing
         "p-3",
-        // Typography
         "text-base font-base text-gray-900 dark:text-white",
-        // Transition
         "transition-colors duration-150",
-        // Cursor
         "cursor-pointer",
         className
       )}
@@ -41,7 +34,6 @@ export function TabCard({ tab, onClick, className }: TabCardProps)
             ? <img
               alt={`${title} favicon`}
               className={Html.joinClasses(
-                // Size
                 "h-[24px] w-[24px]"
               )}
               src={faviconUrl || "chrome://favicon/"}

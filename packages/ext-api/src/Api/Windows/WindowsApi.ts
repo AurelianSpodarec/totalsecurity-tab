@@ -7,7 +7,7 @@ import { WindowUpdateInfo } from "./WindowUpdateInfo";
 
 export class WindowsApi extends AbstractApi
 {
-  // windows.create
+
   public static create(createInfo: WindowCreateInfo): Promise<Window>
   {
     return this.isMv2() && this.useChromeApi()
@@ -15,7 +15,6 @@ export class WindowsApi extends AbstractApi
       : this.getBrowserApi().windows.create(createInfo);
   }
   
-  // windows.update
   public static update(windowId: number, updateInfo: WindowUpdateInfo): Promise<Window>
   {
     return this.isMv2() && this.useChromeApi()

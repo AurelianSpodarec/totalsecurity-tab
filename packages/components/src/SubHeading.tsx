@@ -12,12 +12,8 @@ export function SubHeading({ children, className }: PageSubHeadingProps)
     <h1
       className={
         Html.joinClasses(
-          // Base
           "text-base",
-          // Color
           "text-gray-900 dark:text-white",
-          // Spacing
-          // "m-0",
           className
         )
       }

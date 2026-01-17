@@ -28,9 +28,7 @@ export function WindowCard({ window, onClick, onMouseEnter, className }: TabCard
   return (
     <div
       className={Html.joinClasses(
-        // Spacing
         "p-3",
-        // Cursor
         "cursor-pointer",
         className
       )}
@@ -68,8 +66,8 @@ export function WindowCard({ window, onClick, onMouseEnter, className }: TabCard
 }
 
 
-const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>) => {
-
+const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>) => 
+{
   const shiftedLeft: Array<{ tab: SessionTab, oldIndex: number, newIndex: number }> = [];
   const shiftedRight: Array<{ tab: SessionTab, oldIndex: number, newIndex: number }> = [];
 
@@ -77,7 +75,7 @@ const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>)
   {
     const newIndex = Number(key);
     const oldIndex = oldTabs.findIndex(tab => tab.id === newTabs[key].id);
-    // If it hasn't moved, skip
+
     if (oldIndex === newIndex) continue;
     const shiftedTab = { tab: newTabs[key], oldIndex, newIndex };
 
@@ -85,18 +83,14 @@ const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>)
     else if (oldIndex > newIndex) shiftedLeft.push(shiftedTab);
   }
 
-  // If nothing has moved, return null
   if (!shiftedLeft.length && !shiftedRight.length) return null;
 
-  // If one item has shifted left and one has shifted right, it doesn't matter which one you return
   if (shiftedLeft.length === 1 && shiftedRight.length === 1)
   {
     return shiftedLeft.at(0)!;
   }
 
-  // If one item has shifted left, return it
   if (shiftedLeft.length === 1) return shiftedLeft.at(0)!;
-  // If one item has shifted right, return it
   else if (shiftedRight.length === 1) return shiftedRight.at(0)!;
 
   throw new Error("Multiple items moved at once");

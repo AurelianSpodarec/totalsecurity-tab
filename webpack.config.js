@@ -19,19 +19,15 @@ export default {
     // new BundleAnalyzerPlugin({ defaultSizes: "stat" }),
     new webpack.ProgressPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'app/[name]/[name].min.css', // Output file with cache-busting hash
+      filename: 'app/[name]/[name].min.css',
     }),
     new CopyWebpackPlugin({
       patterns: [
-        // Copy side panel app index.html file
         { from: "app/side_panel/index.html", to: "app/side_panel/index.html" },
-        // Copy service worker entry file
         { from: "app/background/service-worker.js", to: "service-worker.js" },
-        // Copy manifest.json file
         {
           from: "src/manifest.json",
           to: "manifest.json",
-          // Replace any values or placeholders in the manifest.json file
           transform: (content) => {
             const manifest = JSON.parse(content.toString());
             manifest.version = "1.0"; // TODO: Pull version dynamically from env variable or package.json
@@ -48,47 +44,40 @@ export default {
       new TsconfigPathsPlugin()
     ]
   },
-  // Loaders
   module: {
     rules: [
-      // TypeScript
       {
         test: /\.(ts|tsx)$/,
         exclude: /\.(test|testing)\.ts$/,
         use: [ { loader: "ts-loader" } ]
       },
-      // CSS
       {
-        test: /\.css$/, // Matches any .css file
+        test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
           "postcss-loader"
         ]
       },
-      // Images
       {
         test: /\.(svg)$/,
-        type: "asset", // Automatically decides between 'asset/resource' and 'asset/inline' based on file size
+        type: "asset",
         parser: {
           dataUrlCondition: {
-            maxSize: 8192 // Inline files smaller than 8kb as Data URLs, emit others as separate files
+            maxSize: 8192
           }
         }
       }
     ]
   },
-  // Entry
   entry: {
     background: "./app/background/background.ts",
     side_panel: "./app/side_panel/side_panel.tsx"
   },
-  // Output
   output: {
     filename: "app/[name]/[name].min.js",
     path: buildDir
   },
-  // Optimization
   optimization: {
     concatenateModules: false,
     minimize: true,
@@ -111,31 +100,29 @@ export default {
       }),
     ],
     splitChunks: {
-      chunks: 'initial', // Only initial chunks
-      minSize: 0, // Allow small chunks (no minimum)
-      minChunks: 1, // Override defaults for full control
+      chunks: 'initial',
+      minSize: 0,
+      minChunks: 1,
       cacheGroups: {
-        // Disable default groups
         default: false,
         defaultVendors: false,
-        // Custom groups
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'react', // chunks/react.js
-          priority: 20, // Highest priority to catch React first
-          minChunks: 1, // Include even if used in one entry
+          name: 'react',
+          priority: 20,
+          minChunks: 1,
         },
         vendor: {
           test: /[\\/]node_modules[\\/]/,
-          name: 'vendor', // chunks/vendors.js
-          priority: 10, // Lower than react to exclude it
+          name: 'vendor',
+          priority: 10,
           minChunks: 1,
         },
         shared: {
-          test: /[\\/]src[\\/]/, // Only your app code
-          name: 'shared', // chunks/common.js
-          minChunks: 2, // Shared across 2+ entries
-          priority: 0, // Lowest priority
+          test: /[\\/]src[\\/]/,
+          name: 'shared',
+          minChunks: 2,
+          priority: 0,
         },
       },
     },

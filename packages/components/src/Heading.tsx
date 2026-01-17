@@ -11,9 +11,7 @@ export function Heading({ children }: PageHeadingProps)
     <h1
       className={
         Html.joinClasses(
-          // Base
           "text-2xl font-semibold",
-          // Color
           "text-gray-900 dark:text-white",
         )
       }

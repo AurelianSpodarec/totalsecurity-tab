@@ -7,7 +7,6 @@ import { TabGroupsUpdateInfo } from "./TabGroupsUpdateInfo";
 
 export class TabGroupsApi extends AbstractApi
 {
-  // tabGroups.get
   public static get(groupId: number): Promise<TabGroup>
   {
     return this.isMv2() && this.useChromeApi()
@@ -15,7 +14,6 @@ export class TabGroupsApi extends AbstractApi
       : this.getBrowserApi().tabGroups.get(groupId);
   }
 
-  // tabGroups.update
   public static update(updateOptions: TabGroupsUpdateInfo): Promise<TabGroup>
   {
     return this.isMv2() && this.useChromeApi()
@@ -23,7 +21,6 @@ export class TabGroupsApi extends AbstractApi
       : this.getBrowserApi().tabGroups.update(updateOptions);
   }
 
-  // tabGroups.onCreated
   public static onCreated(callback: (tabGroup: TabGroup) => void): () => void
   {
     const browserApi = this.getBrowserApi();
@@ -34,7 +31,6 @@ export class TabGroupsApi extends AbstractApi
     };
   };
 
-  // tabGroups.onMoved
   public static onMoved(callback: (tabGroup: TabGroup) => void): () => void
   {
     const browserApi = this.getBrowserApi();
@@ -45,7 +41,6 @@ export class TabGroupsApi extends AbstractApi
     };
   };
 
-  // tabGroups.onRemoved
   public static onRemoved(callback: (tabGroup: TabGroup) => void): () => void
   {
     const browserApi = this.getBrowserApi();
@@ -56,7 +51,6 @@ export class TabGroupsApi extends AbstractApi
     };
   };
 
-  // tabGroups.onUpdated
   public static onUpdated(callback: (tabGroup: TabGroup) => void): () => void
   {
     const browserApi = this.getBrowserApi();

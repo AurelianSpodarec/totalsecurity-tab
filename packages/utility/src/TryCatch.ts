@@ -19,8 +19,6 @@ export function tryCatch(catchable: any): any
   return [ result, error ];
 }
 
-// Sync
-
 function tryCatchSync<Fn extends () => any>(fn: Fn): [ ReturnType<Fn>, null ] | [ null, Error ]
 {
   try
@@ -32,8 +30,6 @@ function tryCatchSync<Fn extends () => any>(fn: Fn): [ ReturnType<Fn>, null ] | 
     return [ null, error instanceof Error ? error : new Error(error as any) ];
   }
 }
-
-// Async
 
 type Resolved<T extends Promise<any>> = T extends Promise<infer R> ? R : never;
 

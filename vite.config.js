@@ -7,9 +7,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths(), // Include tsconfig alias paths
-    react(), // Add support for tsx/jsx files
-    copyManifest(), // Copy across manifest.json and set version to package.json version
+    tsconfigPaths(),
+    react(),
+    copyManifest(),
     tailwindcss()
   ],
   build: {
@@ -26,5 +26,5 @@ export default defineConfig({
       }
     }
   },
-  publicDir: false // Disable automatic public directory copying
+  publicDir: false
 });

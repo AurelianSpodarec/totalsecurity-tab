@@ -14,7 +14,6 @@ export class AbstractStorageApi extends AbstractApi
    * Getters & Setter
    */
 
-  // storage.{type}.get
   public static get(...key: Array<string>): Promise<{ [key: string]: any }>
   {
     return this.isMv2() && this.useChromeApi()
@@ -22,7 +21,6 @@ export class AbstractStorageApi extends AbstractApi
       : this.getBrowserApi().storage[this.storageType].get(key);
   };
 
-  // storage.{type}.set
   public static set(items: { [key: string]: any }): Promise<void>
   {
     return this.isMv2() && this.useChromeApi()
@@ -34,7 +32,6 @@ export class AbstractStorageApi extends AbstractApi
    * Events
    */
 
-  // storage.onChanged
   public static onChanged(callback: (changes: {
     [key: string]: StorageChange
   }) => void, ...keys: Array<string>): () => void
@@ -43,15 +40,12 @@ export class AbstractStorageApi extends AbstractApi
 
     const listener = (changes: { [key: string]: StorageChange }, areaName: string) => {
 
-      // Only fire callback for relevant storage changes
       if (areaName !== this.storageType) return;
 
-      // If we only care about certain keys
       if (keys.length)
       {
         let hasRelevantChanges = false;
 
-        // Get all relevant changes
         const relevantChanges = Object
           .keys(changes)
           .reduce((relevantChanges, key, index, allKeys) => {
@@ -67,11 +61,9 @@ export class AbstractStorageApi extends AbstractApi
 
         if (!hasRelevantChanges) return;
 
-        // Fire callback with relevant changes
         return callback(relevantChanges);
       }
 
-      // Fire callback with all changes
       return callback(changes);
     };
 

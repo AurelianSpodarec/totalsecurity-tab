@@ -15,7 +15,6 @@ export class TabsApi extends AbstractApi
    * Actions
    */
 
-  // tabs.create
   public static create(createProperties: { url?: string, active?: boolean, index?: number }): Promise<Tab>
   {
     return this.isMv2() && this.useChromeApi()
@@ -23,7 +22,6 @@ export class TabsApi extends AbstractApi
       : this.getBrowserApi().tabs.create(createProperties);
   };
 
-  // tabs.remove
   public static remove(...tabId: Array<number>): Promise<void>
   {
     return this.isMv2() && this.useChromeApi()
@@ -31,7 +29,6 @@ export class TabsApi extends AbstractApi
       : this.getBrowserApi().tabs.remove(tabId);
   };
 
-  // tabs.move
   public static move(tabIds: number | Array<number>, moveProperties: TabMoveProperties): Promise<Tab | Array<Tab>>
   {
     return this.isMv2() && this.useChromeApi()
@@ -39,7 +36,6 @@ export class TabsApi extends AbstractApi
       : this.getBrowserApi().tabs.move(tabIds, moveProperties);
   };
 
-  // tabs.update
   public static update(
     tabId: number,
     updateProperties: {
@@ -62,7 +58,6 @@ export class TabsApi extends AbstractApi
    * Getters & Setters
    */
 
-  // tabs.get
   public static get(tabId: number): Promise<Tab>
   {
     return this.isMv2() && this.useChromeApi()
@@ -74,7 +69,6 @@ export class TabsApi extends AbstractApi
    * Events
    */
 
-  // tabs.onActivated
   public static onActivated(callback: (activeInfo: TabActiveInfo) => void): () => void
   {
     const browserApi = this.getBrowserApi();
@@ -85,7 +79,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onAttached
   public static onAttached(
     callback: (tabId: number, attachInfo: TabAttachInfo) => void
   ): () => void
@@ -98,7 +91,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onDetached
   public static onDetached(
     callback: (tabId: number, detachInfo: TabDetachInfo) => void
   ): () => void
@@ -111,7 +103,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onRemoved
   public static onRemoved(
     callback: (tabId: number, removeInfo: TabRemoveInfo) => void
   ): () => void
@@ -124,7 +115,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onCreated
   public static onCreated(
     callback: (tab: Tab) => void
   ): () => void
@@ -137,7 +127,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onUpdated
   public static onUpdated(
     callback: (
       tabId: number,
@@ -154,7 +143,6 @@ export class TabsApi extends AbstractApi
     };
   };
 
-  // tabs.onMoved
   public static onMoved(
     callback: (
       tabId: number,

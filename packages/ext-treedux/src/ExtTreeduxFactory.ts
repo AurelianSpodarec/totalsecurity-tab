@@ -33,29 +33,23 @@ export class ExtTreeduxFactory<DataStoreMap extends DefaultDataStoreMap = Defaul
   {
     return new Promise((resolve, reject) => {
 
-      // If store already exists, return
       if (this.instance) return resolve(this.instance);
 
-      // If we're in the process of initialising the store
       if (this.initialisingStore)
       {
-        // Resolve this when the store has been created rather than trying to create it again
         this.onInitialisedCallbacks.push((instance: ExtTreedux<DataStoreMap>) => resolve(instance));
         return;
       }
 
       this.initialisingStore = true;
 
-      // Initialise store
       this
         .initStore()
         .then((instance) => {
-          // Run any on store created callbacks
           this.onInitialisedCallbacks.forEach((onInitialised) => {
             return onInitialised(instance);
           });
 
-          // Reset callbacks
           this.onInitialisedCallbacks = [];
           this.initialisingStore = false;
 

@@ -17,9 +17,7 @@ export function copyDirectory(from, to)
 
       try
       {
-        // Ensure destination directory exists
         mkdirSync(dirname(dest), { recursive: true });
-        // Copy recursively
         cpSync(from, dest, { recursive: true });
       }
       catch (error)
