@@ -113,6 +113,33 @@ export function WindowCard({
                   if (nextIndex < 0) return;
 
                   enqueueChromeTabMove(tabId, nextIndex, true);
+
+                  const movedTab = nextTabs[nextIndex];
+                  const leftNeighbor = nextTabs[nextIndex - 1];
+                  const rightNeighbor = nextTabs[nextIndex + 1];
+
+                  const leftGroupId = leftNeighbor?.groupId ?? -1;
+                  const rightGroupId = rightNeighbor?.groupId ?? -1;
+
+                  // Heuristic: if you drop next to tabs in a group, join that group.
+                  // If you drop between two different groups, do nothing (avoid picking the wrong one).
+                  let desiredGroupId = -1;
+
+                  if (leftGroupId !== -1 && rightGroupId !== -1 && leftGroupId !== rightGroupId) {
+                    desiredGroupId = -1;
+                  } else if (leftGroupId !== -1) {
+                    desiredGroupId = leftGroupId;
+                  } else if (rightGroupId !== -1) {
+                    desiredGroupId = rightGroupId;
+                  }
+
+                  if (desiredGroupId !== movedTab.groupId) {
+                    if (desiredGroupId === -1) {
+                      TabsApi.ungroup(tabId).catch(console.error);
+                    } else {
+                      TabsApi.group(tabId, desiredGroupId).catch(console.error);
+                    }
+                  }
                 }}
               >
                 <TabCard

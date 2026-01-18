@@ -13,7 +13,8 @@
     "sidePanel",
     "alarms",
     "storage",
-    "tabs"
+    "tabs",
+    "tabGroups"
   ],
   "host_permissions": [
     "<all_urls>"

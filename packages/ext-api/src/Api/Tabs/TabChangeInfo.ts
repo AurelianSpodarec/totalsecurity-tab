@@ -5,7 +5,7 @@ export type TabChangeInfo = {
   autoDiscardable?: boolean;
   discarded?: boolean;
   favIconUrl?: string;
-  groupId?: boolean;
+  groupId?: number;
   mutedInfo?: boolean;
   pinned?: boolean;
   status?: TabStatusEnum;

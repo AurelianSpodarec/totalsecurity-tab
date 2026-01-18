@@ -6,19 +6,30 @@ import { TabGroupsQueryInfo } from "./TabGroupsQueryInfo";
 import { TabGroupsUpdateInfo } from "./TabGroupsUpdateInfo";
 
 export class TabGroupsApi extends AbstractApi {
+  /** chrome.tabGroups is not available in all browsers (e.g. Firefox). */
+  public static isSupported(): boolean {
+    return !!this.getBrowserApi().tabGroups;
+  }
+
   public static get(groupId: number): Promise<TabGroup> {
+    if (!this.isSupported()) return Promise.reject(new Error("tabGroups API not supported"));
+
     return this.isMv2() && this.useChromeApi()
       ? Promises.wrap((callback) => this.getBrowserApi().tabGroups.get(groupId, callback))
       : this.getBrowserApi().tabGroups.get(groupId);
   }
 
   public static update(updateOptions: TabGroupsUpdateInfo): Promise<TabGroup> {
+    if (!this.isSupported()) return Promise.reject(new Error("tabGroups API not supported"));
+
     return this.isMv2() && this.useChromeApi()
       ? Promises.wrap((callback) => this.getBrowserApi().tabGroups.update(updateOptions, callback))
       : this.getBrowserApi().tabGroups.update(updateOptions);
   }
 
   public static onCreated(callback: (tabGroup: TabGroup) => void): () => void {
+    if (!this.isSupported()) return () => {};
+
     const browserApi = this.getBrowserApi();
     browserApi.tabGroups.onCreated.addListener(callback);
 
@@ -28,6 +39,8 @@ export class TabGroupsApi extends AbstractApi {
   }
 
   public static onMoved(callback: (tabGroup: TabGroup) => void): () => void {
+    if (!this.isSupported()) return () => {};
+
     const browserApi = this.getBrowserApi();
     browserApi.tabGroups.onMoved.addListener(callback);
 
@@ -37,6 +50,8 @@ export class TabGroupsApi extends AbstractApi {
   }
 
   public static onRemoved(callback: (tabGroup: TabGroup) => void): () => void {
+    if (!this.isSupported()) return () => {};
+
     const browserApi = this.getBrowserApi();
     browserApi.tabGroups.onRemoved.addListener(callback);
 
@@ -46,6 +61,8 @@ export class TabGroupsApi extends AbstractApi {
   }
 
   public static onUpdated(callback: (tabGroup: TabGroup) => void): () => void {
+    if (!this.isSupported()) return () => {};
+
     const browserApi = this.getBrowserApi();
     browserApi.tabGroups.onUpdated.addListener(callback);
 

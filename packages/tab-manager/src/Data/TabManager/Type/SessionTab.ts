@@ -1,3 +1,5 @@
+import { TabGroupColor } from "@packages/ext-api";
+
 export type SessionTab = {
   id: number;
   title?: string;
@@ -6,4 +8,6 @@ export type SessionTab = {
   pinned: boolean;
   index: number;
   active: boolean;
+  groupId: number;
+  groupColor?: TabGroupColor;
 };

@@ -32,6 +32,42 @@ export class TabsApi extends AbstractApi {
       : this.getBrowserApi().tabs.move(tabIds, moveProperties);
   }
 
+  /**
+   * Adds tab(s) to an existing group (groupId) or creates a new group (groupId omitted).
+   * Not supported in all browsers.
+   */
+  public static group(tabIds: number | Array<number>, groupId?: number): Promise<number> {
+    const browserApi = this.getBrowserApi();
+    if (!browserApi.tabs?.group) return Promise.reject(new Error("tabs.group API not supported"));
+
+    const groupOptions: { tabIds: Array<number>; groupId?: number } = {
+      tabIds: Array.isArray(tabIds) ? tabIds : [tabIds],
+    };
+
+    if (typeof groupId === "number" && groupId !== -1) {
+      groupOptions.groupId = groupId;
+    }
+
+    return this.isMv2() && this.useChromeApi()
+      ? Promises.wrap((callback) => browserApi.tabs.group(groupOptions, callback))
+      : browserApi.tabs.group(groupOptions);
+  }
+
+  /**
+   * Removes tab(s) from their current group.
+   * Not supported in all browsers.
+   */
+  public static ungroup(tabIds: number | Array<number>): Promise<void> {
+    const browserApi = this.getBrowserApi();
+    if (!browserApi.tabs?.ungroup) return Promise.reject(new Error("tabs.ungroup API not supported"));
+
+    const tabIdList = Array.isArray(tabIds) ? tabIds : [tabIds];
+
+    return this.isMv2() && this.useChromeApi()
+      ? Promises.wrap((callback) => browserApi.tabs.ungroup(tabIdList, callback))
+      : browserApi.tabs.ungroup(tabIdList);
+  }
+
   public static update(
     tabId: number,
     updateProperties: {

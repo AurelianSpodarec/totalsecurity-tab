@@ -1,7 +1,7 @@
 import { Html } from "@packages/utility";
 import { MouseEventHandler } from "react";
 import { Cross2Icon, DrawingPinFilledIcon, DrawingPinIcon, GlobeIcon } from "@radix-ui/react-icons";
-import { SessionTab } from "@packages/tab-manager";
+import { SessionTab, tabGroupColorToHex } from "@packages/tab-manager";
 import { IconButton } from "./IconButton";
 import { TabsApi } from "@packages/ext-api";
 
@@ -12,7 +12,9 @@ type TabCardProps = {
 };
 
 export function TabCard({ tab, onClick, className }: TabCardProps) {
-  const { faviconUrl, title, pinned, active } = tab;
+  const { faviconUrl, title, pinned, active, groupColor } = tab;
+  const groupBorderHex = tabGroupColorToHex(groupColor);
+
   return (
     <div
       className={Html.joinClasses(
@@ -25,6 +27,7 @@ export function TabCard({ tab, onClick, className }: TabCardProps) {
         "cursor-pointer",
         className
       )}
+      style={groupBorderHex ? { borderLeft: `4px solid ${groupBorderHex}` } : undefined}
       onClick={onClick}
     >
       <span className={"flex items-center gap-3 truncate"}>

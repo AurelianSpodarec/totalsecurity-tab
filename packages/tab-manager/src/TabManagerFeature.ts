@@ -1,6 +1,6 @@
-import { Tab, TabsApi, WindowsApi } from "@packages/ext-api";
+import { Tab, TabGroupsApi, TabsApi, WindowsApi } from "@packages/ext-api";
 import { Redux } from "@packages/state";
-import { SessionWindow } from "@packages/tab-manager";
+import { SessionTab, SessionWindow } from "@packages/tab-manager";
 import { tryCatch } from "@packages/utility";
 
 export class TabManagerFeature {
@@ -19,18 +19,39 @@ export class TabManagerFeature {
 
   private async createSessionWindow(windowId: number): Promise<SessionWindow> {
     const window = await WindowsApi.get(windowId, { populate: true });
+    const tabs = window.tabs || ([] as Array<Tab>);
+
+    const sessionTabs: Array<SessionTab> = await Promise.all(
+      tabs.map(async (tab) => {
+        const groupId = tab.groupId ?? -1;
+        let groupColor;
+
+        if (groupId !== -1) {
+          try {
+            const group = await TabGroupsApi.get(groupId);
+            groupColor = group.color;
+          } catch {
+            // Group may have been deleted; leave colour undefined.
+          }
+        }
+
+        return {
+          id: tab.id!,
+          url: tab.url || tab.pendingUrl,
+          title: tab.title,
+          faviconUrl: tab.favIconUrl,
+          pinned: tab.pinned,
+          index: tab.index,
+          active: tab.active,
+          groupId,
+          groupColor,
+        };
+      })
+    );
 
     return {
       id: windowId,
-      tabs: (window.tabs || ([] as Array<Tab>)).map((tab) => ({
-        id: tab.id!,
-        url: tab.url || tab.pendingUrl,
-        title: tab.title,
-        faviconUrl: tab.favIconUrl,
-        pinned: tab.pinned,
-        index: tab.index,
-        active: tab.active,
-      })),
+      tabs: sessionTabs,
     };
   }
 
@@ -64,9 +85,15 @@ export class TabManagerFeature {
     TabsApi.onUpdated((tabId, changeInfo, tab) => {
       console.log("Tab updated", tabId, changeInfo);
 
-      if (!changeInfo.url && !changeInfo.favIconUrl && !changeInfo.title && typeof changeInfo.pinned != "boolean") {
-        return;
-      }
+      const hasRelevantChange =
+        !!changeInfo.url ||
+        !!changeInfo.favIconUrl ||
+        !!changeInfo.title ||
+        typeof changeInfo.pinned === "boolean" ||
+        // Some Chrome versions report groupId changes with groupId present but null-ish.
+        Object.prototype.hasOwnProperty.call(changeInfo, "groupId");
+
+      if (!hasRelevantChange) return;
 
       return this.syncWindow(tab.windowId);
     });
@@ -89,6 +116,21 @@ export class TabManagerFeature {
     TabsApi.onMoved((tabId, moveInfo) => {
       console.log(`Tab moved`, moveInfo);
       return this.syncWindow(moveInfo.windowId);
+    });
+
+    TabGroupsApi.onCreated((group) => {
+      console.log("Tab group created", group);
+      return this.syncWindow(group.windowId);
+    });
+
+    TabGroupsApi.onRemoved((group) => {
+      console.log("Tab group removed", group);
+      return this.syncWindow(group.windowId);
+    });
+
+    TabGroupsApi.onUpdated((group) => {
+      console.log("Tab group updated", group);
+      return this.syncWindow(group.windowId);
     });
   }
 }
