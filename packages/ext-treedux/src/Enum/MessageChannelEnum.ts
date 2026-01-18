@@ -1,5 +1,4 @@
-export enum MessageChannelEnum
-{
+export enum MessageChannelEnum {
   DISPATCH = "dispatch",
-  SET_OVERRIDES = "set_overrides"
+  SET_OVERRIDES = "set_overrides",
 }

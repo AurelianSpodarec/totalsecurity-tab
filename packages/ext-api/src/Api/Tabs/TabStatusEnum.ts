@@ -1,7 +1,5 @@
-
-export enum TabStatusEnum
-{
+export enum TabStatusEnum {
   UNLOADED = "unloaded",
   LOADING = "loading",
-  COMPLETE = "complete"
+  COMPLETE = "complete",
 }

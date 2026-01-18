@@ -1,4 +1,3 @@
-
 import "../../css/styles.css";
 import { createRoot } from "react-dom/client";
 import { SidePanelApp } from "./src/SidePanelApp";
@@ -11,5 +10,5 @@ console.log("Sidebar script loaded");
   if (!root) throw new Error("Root element not found");
 
   await Redux.init();
-  createRoot(root).render(<SidePanelApp/>);
+  createRoot(root).render(<SidePanelApp />);
 })();

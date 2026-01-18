@@ -7,10 +7,13 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "npm run typecheck && vite build",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint apps packages",
+    "lint:fix": "eslint apps packages --fix"
   },
   "dependencies": {},
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@radix-ui/react-icons": "^1.3.2",
     "@reduxjs/toolkit": "^2.5.0",
     "@tailwindcss/postcss": "^4.0.15",
@@ -20,12 +23,17 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^5.1.0",
     "clsx": "^2.1.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.0.0",
     "motion": "^12.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.15",
     "treeduxjs": "^1.4.1",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.53.0",
     "vite": "^7.2.2",
     "vite-tsconfig-paths": "^5.1.4"
   },

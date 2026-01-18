@@ -3,16 +3,13 @@ import { Redux } from "@packages/state";
 import { SessionWindow } from "@packages/tab-manager";
 import { tryCatch } from "@packages/utility";
 
-export class TabManagerFeature
-{
-  public bootstrap()
-  {
+export class TabManagerFeature {
+  public bootstrap() {
     this.setupEventListeners();
     this.syncAllWindows().catch(console.error);
   }
 
-  private async syncWindow(windowId: number)
-  {
+  private async syncWindow(windowId: number) {
     return tryCatch(async () => {
       const window = await this.createSessionWindow(windowId);
       const redux = await Redux.init();
@@ -20,32 +17,29 @@ export class TabManagerFeature
     });
   }
 
-  private async createSessionWindow(windowId: number): Promise<SessionWindow>
-  {
+  private async createSessionWindow(windowId: number): Promise<SessionWindow> {
     const window = await WindowsApi.get(windowId, { populate: true });
 
     return {
       id: windowId,
-      tabs: (window.tabs || [] as Array<Tab>).map(tab => ({
+      tabs: (window.tabs || ([] as Array<Tab>)).map((tab) => ({
         id: tab.id!,
         url: tab.url || tab.pendingUrl,
         title: tab.title,
         faviconUrl: tab.favIconUrl,
         pinned: tab.pinned,
         index: tab.index,
-        active: tab.active
-      }))
-    }
+        active: tab.active,
+      })),
+    };
   }
 
-  private async syncAllWindows(): Promise<void>
-  {
+  private async syncAllWindows(): Promise<void> {
     const windows = await WindowsApi.getAll({ populate: true });
-    await Promise.all(windows.map(w => this.syncWindow(w.id!)));
+    await Promise.all(windows.map((w) => this.syncWindow(w.id!)));
   }
 
-  private setupEventListeners()
-  {
+  private setupEventListeners() {
     WindowsApi.onCreated((window) => {
       if (!window.id) return;
       return this.syncWindow(window.id);
@@ -70,13 +64,7 @@ export class TabManagerFeature
     TabsApi.onUpdated((tabId, changeInfo, tab) => {
       console.log("Tab updated", tabId, changeInfo);
 
-      if (
-        !changeInfo.url
-        && !changeInfo.favIconUrl
-        && !changeInfo.title
-        && typeof changeInfo.pinned != "boolean"
-      )
-      {
+      if (!changeInfo.url && !changeInfo.favIconUrl && !changeInfo.title && typeof changeInfo.pinned != "boolean") {
         return;
       }
 

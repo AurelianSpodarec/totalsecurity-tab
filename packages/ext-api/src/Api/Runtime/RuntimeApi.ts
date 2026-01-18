@@ -2,65 +2,52 @@ import { AbstractApi } from "../../AbstractApi";
 import { MessageSender } from "./MessageSender";
 import { Promises } from "../../Utility/Promises";
 
-export class RuntimeApi extends AbstractApi
-{
+export class RuntimeApi extends AbstractApi {
   /**
    * Actions
    */
 
-  // runtime.sendMessage
   public static sendMessage(
     channel: string,
     payload?: any,
     extensionId?: string,
     options?: { includeTlsChannelId?: boolean }
-  ): Promise<any>
-  {
+  ): Promise<any> {
     const message = {
       channel: channel,
-      payload: payload
+      payload: payload,
     };
 
     return this.isMv2() && this.useChromeApi()
-      ? Promises.wrap(callback => this.getBrowserApi().runtime.sendMessage(extensionId, message, options, callback))
+      ? Promises.wrap((callback) => this.getBrowserApi().runtime.sendMessage(extensionId, message, options, callback))
       : this.getBrowserApi().runtime.sendMessage(extensionId, message, options);
-  };
+  }
 
   /**
    * Getters & Setters
    */
 
-  // runtime.getManifest
-  public static getManifest(): { [key: string]: any }
-  {
+  public static getManifest(): { [key: string]: any } {
     return this.getBrowserApi().runtime.getManifest();
-  };
+  }
 
   /**
    * Events
    */
 
-  // runtime.onMessage
   public static onMessage(
     channel: string,
-    callback: (
-      payload: any,
-      sender: MessageSender,
-      channel: string
-    ) => any
-  ): () => void
-  {
+    callback: (payload: any, sender: MessageSender, channel: string) => any
+  ): () => void {
     const browserApi = this.getBrowserApi();
 
     const listener = (message: any, sender: MessageSender, sendResponse: (response: any) => void) => {
       // Check if the message channel matches or if it's a wildcard
-      if (message.channel === channel || channel === "*")
-      {
+      if (message.channel === channel || channel === "*") {
         const response = callback(message.payload, sender, message.channel);
 
         // Handle promise responses
-        if (response instanceof Promise)
-        {
+        if (response instanceof Promise) {
           response.then(sendResponse);
           return true;
         }
@@ -74,15 +61,15 @@ export class RuntimeApi extends AbstractApi
     return () => {
       browserApi.runtime.onMessage.removeListener(listener);
     };
-  };
+  }
 
-  // runtime.onInstalled
-  public static onInstalled(callback: (details: {
-    id?: string;
-    previousVersion?: string;
-    reason: "install" | "update" | "browser_update" | "shared_module_update";
-  }) => void): () => void
-  {
+  public static onInstalled(
+    callback: (details: {
+      id?: string;
+      previousVersion?: string;
+      reason: "install" | "update" | "browser_update" | "shared_module_update";
+    }) => void
+  ): () => void {
     const listener = (details: any) => {
       details.reason = details.reason === "chrome_update" ? "browser_update" : details.reason;
       callback(details);
@@ -94,5 +81,5 @@ export class RuntimeApi extends AbstractApi
     return () => {
       browserApi.runtime.onInstalled.removeListener(listener);
     };
-  };
+  }
 }

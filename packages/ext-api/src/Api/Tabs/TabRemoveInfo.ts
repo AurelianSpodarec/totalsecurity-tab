@@ -1,4 +1,4 @@
 export type TabRemoveInfo = {
-  isWindowClosing: boolean,
-  windowId: number
+  isWindowClosing: boolean;
+  windowId: number;
 };

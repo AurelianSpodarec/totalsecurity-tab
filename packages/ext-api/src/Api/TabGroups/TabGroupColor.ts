@@ -1,5 +1,4 @@
-export enum TabGroupColor
-{
+export enum TabGroupColor {
   GREY = "grey",
   BLUE = "blue",
   RED = "red",
@@ -8,5 +7,5 @@ export enum TabGroupColor
   PINK = "pink",
   PURPLE = "purple",
   CYAN = "cyan",
-  ORANGE = "orange"
+  ORANGE = "orange",
 }

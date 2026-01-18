@@ -1,4 +1,4 @@
 export type TabActiveInfo = {
-  tabId: number,
-  windowId: number
+  tabId: number;
+  windowId: number;
 };

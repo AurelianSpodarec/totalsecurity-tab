@@ -2,8 +2,7 @@ import { AbstractApi } from "../../AbstractApi";
 import { StorageChange } from "./StorageChange";
 import { Promises } from "../../Utility/Promises";
 
-export class AbstractStorageApi extends AbstractApi
-{
+export class AbstractStorageApi extends AbstractApi {
   protected static storageType: "local" | "session" = "local";
 
   /**
@@ -14,50 +13,45 @@ export class AbstractStorageApi extends AbstractApi
    * Getters & Setter
    */
 
-  public static get(...key: Array<string>): Promise<{ [key: string]: any }>
-  {
+  public static get(...key: Array<string>): Promise<{ [key: string]: any }> {
     return this.isMv2() && this.useChromeApi()
-      ? Promises.wrap(callback => this.getBrowserApi().storage[this.storageType].get(key, callback))
+      ? Promises.wrap((callback) => this.getBrowserApi().storage[this.storageType].get(key, callback))
       : this.getBrowserApi().storage[this.storageType].get(key);
-  };
+  }
 
-  public static set(items: { [key: string]: any }): Promise<void>
-  {
+  public static set(items: { [key: string]: any }): Promise<void> {
     return this.isMv2() && this.useChromeApi()
-      ? Promises.wrap(callback => this.getBrowserApi().storage[this.storageType].set(items, callback))
+      ? Promises.wrap((callback) => this.getBrowserApi().storage[this.storageType].set(items, callback))
       : this.getBrowserApi().storage[this.storageType].set(items);
-  };
+  }
 
   /**
    * Events
    */
 
-  public static onChanged(callback: (changes: {
-    [key: string]: StorageChange
-  }) => void, ...keys: Array<string>): () => void
-  {
+  public static onChanged(
+    callback: (changes: { [key: string]: StorageChange }) => void,
+    ...keys: Array<string>
+  ): () => void {
     const browserApi = this.getBrowserApi();
 
     const listener = (changes: { [key: string]: StorageChange }, areaName: string) => {
-
       if (areaName !== this.storageType) return;
 
-      if (keys.length)
-      {
+      if (keys.length) {
         let hasRelevantChanges = false;
 
-        const relevantChanges = Object
-          .keys(changes)
-          .reduce((relevantChanges, key, index, allKeys) => {
-
-            if (keys.includes(key))
-            {
+        const relevantChanges = Object.keys(changes).reduce(
+          (relevantChanges, key, index, allKeys) => {
+            if (keys.includes(key)) {
               hasRelevantChanges = true;
               relevantChanges[key] = changes[key];
             }
 
             return relevantChanges;
-          }, {} as { [key: string]: StorageChange });
+          },
+          {} as { [key: string]: StorageChange }
+        );
 
         if (!hasRelevantChanges) return;
 
@@ -72,5 +66,5 @@ export class AbstractStorageApi extends AbstractApi
     return () => {
       browserApi.storage.onChanged.removeListener(listener);
     };
-  };
+  }
 }

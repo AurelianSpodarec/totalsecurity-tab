@@ -1,43 +1,36 @@
-interface ContextProxyError
-{
+interface ContextProxyError {
   contextProxyError: true;
   error: unknown;
 }
 
-export class ContextProxy
-{
-  public static async withErrorProxy<Handler extends () => Promise<any>>(handler: Handler): Promise<ReturnType<Handler> | ContextProxyError>
-  {
+export class ContextProxy {
+  public static async withErrorProxy<Handler extends () => Promise<any>>(
+    handler: Handler
+  ): Promise<ReturnType<Handler> | ContextProxyError> {
     let handlerResponse: ReturnType<Handler> | ContextProxyError;
-    
-    try
-    {
+
+    try {
       handlerResponse = await handler();
-    }
-    catch (error)
-    {
+    } catch (error) {
       handlerResponse = await this.getErrorResponse(error);
     }
-    
+
     return handlerResponse;
   }
-  
-  public static async throwOrReturn(handlerResponse: ContextProxyError | any): Promise<any>
-  {
+
+  public static async throwOrReturn(handlerResponse: ContextProxyError | any): Promise<any> {
     if (
-      handlerResponse
-      && typeof handlerResponse === "object"
-      && !Array.isArray(handlerResponse)
-      && "contextProxyError" in handlerResponse
-      && handlerResponse.contextProxyError === true
-    )
-    {
+      handlerResponse &&
+      typeof handlerResponse === "object" &&
+      !Array.isArray(handlerResponse) &&
+      "contextProxyError" in handlerResponse &&
+      handlerResponse.contextProxyError === true
+    ) {
       const { error } = handlerResponse;
-      
+
       if (!error) throw error;
-      
-      if (error.hasOwnProperty("name") && typeof error.name === "string" && error.name !== "Response")
-      {
+
+      if (error.hasOwnProperty("name") && typeof error.name === "string" && error.name !== "Response") {
         const ErrorConstructor = this.getErrorConstructor(error.name);
         const errorInstance = new ErrorConstructor(error.message);
         errorInstance.stack = error.stack;
@@ -47,34 +40,27 @@ export class ContextProxy
     }
     return handlerResponse;
   }
-  
-  private static async getErrorResponse(error: unknown): Promise<ContextProxyError>
-  {
-    if (!error)
-    {
+
+  private static async getErrorResponse(error: unknown): Promise<ContextProxyError> {
+    if (!error) {
       return {
         contextProxyError: true,
-        error: error
+        error: error,
       };
     }
-    
-    if (error instanceof Response)
-    {
-      
+
+    if (error instanceof Response) {
       let body: object | string;
-      
-      try
-      {
+
+      try {
         body = await error.json();
-      }
-      catch (e)
-      {
+      } catch (e) {
         body = await error.text();
       }
-      
+
       const headers: { [key: string]: string } = {};
-      error.headers.forEach((value, key) => headers[key] = value);
-      
+      error.headers.forEach((value, key) => (headers[key] = value));
+
       return {
         contextProxyError: true,
         error: {
@@ -87,36 +73,35 @@ export class ContextProxy
           status: error.status,
           statusText: error.statusText,
           type: error.type,
-          url: error.url
-        }
+          url: error.url,
+        },
       };
-    }
-    else if (typeof error === "object" && error instanceof Error)
-    {
+    } else if (typeof error === "object" && error instanceof Error) {
       error = {
-        ...error as Error,
+        ...(error as Error),
         name: (error as Error).constructor.name,
         message: (error as Error).message,
-        stack: (error as Error).stack
+        stack: (error as Error).stack,
       };
     }
-    
+
     return {
       contextProxyError: true,
-      error: error
+      error: error,
     };
   }
-  
-  private static getErrorConstructor(name: string): ErrorConstructor
-  {
-    return {
-      Error: Error,
-      EvalError: EvalError,
-      RangeError: RangeError,
-      ReferenceError: ReferenceError,
-      SyntaxError: SyntaxError,
-      TypeError: TypeError,
-      URIError: URIError
-    }[name] || Error;
+
+  private static getErrorConstructor(name: string): ErrorConstructor {
+    return (
+      {
+        Error: Error,
+        EvalError: EvalError,
+        RangeError: RangeError,
+        ReferenceError: ReferenceError,
+        SyntaxError: SyntaxError,
+        TypeError: TypeError,
+        URIError: URIError,
+      }[name] || Error
+    );
   }
 }

@@ -1,6 +1,4 @@
-
-export interface StorageChange
-{
-  oldValue?: any,
-  newValue?: any
+export interface StorageChange {
+  oldValue?: any;
+  newValue?: any;
 }

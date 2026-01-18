@@ -1,4 +1,4 @@
 export type TabMoveProperties = {
-  index: number,
-  windowId?: number
-}
+  index: number;
+  windowId?: number;
+};

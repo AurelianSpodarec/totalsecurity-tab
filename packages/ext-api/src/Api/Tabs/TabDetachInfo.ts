@@ -1,4 +1,4 @@
 export type TabDetachInfo = {
-  oldPosition: number,
-  oldWindowId: number
+  oldPosition: number;
+  oldWindowId: number;
 };

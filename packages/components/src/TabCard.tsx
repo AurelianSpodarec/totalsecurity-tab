@@ -9,10 +9,9 @@ type TabCardProps = {
   tab: SessionTab;
   className?: string;
   onClick?: MouseEventHandler<HTMLDivElement>;
-}
+};
 
-export function TabCard({ tab, onClick, className }: TabCardProps)
-{
+export function TabCard({ tab, onClick, className }: TabCardProps) {
   const { faviconUrl, title, pinned, active } = tab;
   return (
     <div
@@ -29,20 +28,21 @@ export function TabCard({ tab, onClick, className }: TabCardProps)
       onClick={onClick}
     >
       <span className={"flex items-center gap-3 truncate"}>
-        {
-          faviconUrl
-            ? <img
-              alt={`${title} favicon`}
-              className={Html.joinClasses(
-                "h-[24px] w-[24px]"
-              )}
-              src={faviconUrl || "chrome://favicon/"}
-            />
-            : <GlobeIcon style={{ height: 24, width: 24 }}/>
-        }
-        <span className={"truncate"} title={title}>
-        {title}
-      </span>
+        {faviconUrl ? (
+          <img
+            alt={`${title} favicon`}
+            className={Html.joinClasses("h-[24px] w-[24px]")}
+            src={faviconUrl || "chrome://favicon/"}
+          />
+        ) : (
+          <GlobeIcon style={{ height: 24, width: 24 }} />
+        )}
+        <span
+          className={"truncate"}
+          title={title}
+        >
+          {title}
+        </span>
       </span>
 
       <span className={"flex gap-3"}>
@@ -53,16 +53,17 @@ export function TabCard({ tab, onClick, className }: TabCardProps)
             return TabsApi.update(tab.id, { pinned: !pinned });
           }}
         >
-          {pinned ? <DrawingPinFilledIcon/> : <DrawingPinIcon/>}
+          {pinned ? <DrawingPinFilledIcon /> : <DrawingPinIcon />}
         </IconButton>
-        <IconButton onClick={(event) => {
-          event.stopPropagation();
-          return TabsApi.remove(tab.id);
-        }}>
-          {<Cross2Icon/>}
+        <IconButton
+          onClick={(event) => {
+            event.stopPropagation();
+            return TabsApi.remove(tab.id);
+          }}
+        >
+          {<Cross2Icon />}
         </IconButton>
-
       </span>
     </div>
-  )
+  );
 }

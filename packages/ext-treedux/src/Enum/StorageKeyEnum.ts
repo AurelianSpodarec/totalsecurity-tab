@@ -1,5 +1,4 @@
-export enum StorageKeyEnum
-{
+export enum StorageKeyEnum {
   STATE = "state",
-  OVERRIDES = "overrides"
+  OVERRIDES = "overrides",
 }

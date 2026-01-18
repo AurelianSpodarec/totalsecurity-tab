@@ -1,4 +1,3 @@
-
 export type SessionTab = {
   id: number;
   title?: string;
@@ -7,4 +6,4 @@ export type SessionTab = {
   pinned: boolean;
   index: number;
   active: boolean;
-}
+};

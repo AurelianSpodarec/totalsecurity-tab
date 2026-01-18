@@ -10,71 +10,84 @@ type TabCardProps = {
   window: SessionWindow;
   onMouseEnter?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
-}
+};
 
-export function WindowCard({ window, onClick, onMouseEnter, className }: TabCardProps)
-{
-  const [ tabs, setTabs ] = useState(window.tabs);
+export function WindowCard({
+  window,
+  onClick,
+  onMouseEnter,
+  className,
+}: TabCardProps) {
+  const [tabs, setTabs] = useState(window.tabs);
   const dragging = useRef(false);
 
-  useEffect(() => setTabs(window.tabs), [ window.tabs ]);
+  useEffect(() => setTabs(window.tabs), [window.tabs]);
 
   useEffect(() => {
     const movedTab = computeMovedTab(window.tabs, tabs);
     if (!movedTab) return;
-    TabsApi.move(movedTab.tab.id, { index: movedTab.newIndex }).catch(console.error);
-  }, [ tabs ]);
+    TabsApi.move(movedTab.tab.id, { index: movedTab.newIndex }).catch(
+      console.error
+    );
+  }, [tabs]);
 
   return (
     <div
-      className={Html.joinClasses(
-        "p-3",
-        "cursor-pointer",
-        className
-      )}
+      className={Html.joinClasses("p-3", "cursor-pointer", className)}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
-      <Reorder.Group values={tabs} onReorder={setTabs} as={"div"}>
+      <Reorder.Group
+        values={tabs}
+        onReorder={setTabs}
+        as={"div"}
+      >
         <ul className={"flex flex-col gap-3 grow overflow-y-auto"}>
-          {
-            tabs
-              .map((tab) => {
-                return <Reorder.Item
-                  key={tab.id}
-                  value={tab}
-                  onDragStart={() => dragging.current = true}
-                  onDragEnd={() => {
-                    dragging.current = false;
-                    setTabs(window.tabs);
+          {tabs.map((tab) => {
+            return (
+              <Reorder.Item
+                key={tab.id}
+                value={tab}
+                onDragStart={() => (dragging.current = true)}
+                onDragEnd={() => {
+                  dragging.current = false;
+                  setTabs(window.tabs);
+                }}
+              >
+                <TabCard
+                  tab={tab}
+                  onClick={() => {
+                    if (dragging.current) return;
+                    return TabsApi.update(tab.id, { active: true });
                   }}
-                >
-                  <TabCard
-                    tab={tab}
-                    onClick={() => {
-                      if (dragging.current) return;
-                      return TabsApi.update(tab.id, { active: true });
-                    }}
-                  />
-                </Reorder.Item>;
-              })
-          }
+                />
+              </Reorder.Item>
+            );
+          })}
         </ul>
       </Reorder.Group>
     </div>
-  )
+  );
 }
 
+const computeMovedTab = (
+  oldTabs: Array<SessionTab>,
+  newTabs: Array<SessionTab>
+) => {
+  const shiftedLeft: Array<{
+    tab: SessionTab;
+    oldIndex: number;
+    newIndex: number;
+  }> = [];
+  const shiftedRight: Array<{
+    tab: SessionTab;
+    oldIndex: number;
+    newIndex: number;
+  }> = [];
 
-const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>) => 
-{
-  const shiftedLeft: Array<{ tab: SessionTab, oldIndex: number, newIndex: number }> = [];
-  const shiftedRight: Array<{ tab: SessionTab, oldIndex: number, newIndex: number }> = [];
-
-  for (const key in newTabs)
-  {
+  for (const key in newTabs) {
     const newIndex = Number(key);
-    const oldIndex = oldTabs.findIndex(tab => tab.id === newTabs[key].id);
+    const oldIndex = oldTabs.findIndex((tab) => tab.id === newTabs[key].id);
 
     if (oldIndex === newIndex) continue;
     const shiftedTab = { tab: newTabs[key], oldIndex, newIndex };
@@ -85,8 +98,7 @@ const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>)
 
   if (!shiftedLeft.length && !shiftedRight.length) return null;
 
-  if (shiftedLeft.length === 1 && shiftedRight.length === 1)
-  {
+  if (shiftedLeft.length === 1 && shiftedRight.length === 1) {
     return shiftedLeft.at(0)!;
   }
 
@@ -94,4 +106,4 @@ const computeMovedTab = (oldTabs: Array<SessionTab>, newTabs: Array<SessionTab>)
   else if (shiftedRight.length === 1) return shiftedRight.at(0)!;
 
   throw new Error("Multiple items moved at once");
-}
+};

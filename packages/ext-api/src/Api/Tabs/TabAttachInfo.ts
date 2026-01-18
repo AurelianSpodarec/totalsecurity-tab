@@ -1,4 +1,4 @@
 export type TabAttachInfo = {
-  newPosition: number,
-  newWindowId: number
+  newPosition: number;
+  newWindowId: number;
 };

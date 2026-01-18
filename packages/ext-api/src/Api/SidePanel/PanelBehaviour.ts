@@ -1,3 +1,3 @@
 export type PanelBehaviour = {
-  openPanelOnActionClick: boolean
-}
+  openPanelOnActionClick: boolean;
+};

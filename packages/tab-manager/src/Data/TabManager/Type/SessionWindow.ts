@@ -1,6 +1,6 @@
 import { SessionTab } from "./SessionTab";
 
 export type SessionWindow = {
-  id: number,
-  tabs: Array<SessionTab>
-}
+  id: number;
+  tabs: Array<SessionTab>;
+};
