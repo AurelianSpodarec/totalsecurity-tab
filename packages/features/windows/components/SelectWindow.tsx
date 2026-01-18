@@ -1,4 +1,4 @@
-import { Select } from "@packages/ui";
+import { Select } from "@packages/components";
 import { SessionWindow } from "@packages/tab-manager";
 
 type SelectWindowProps = {

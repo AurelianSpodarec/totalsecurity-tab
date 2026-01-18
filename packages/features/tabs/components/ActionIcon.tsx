@@ -1,6 +1,6 @@
 import { MouseEventHandler, ReactNode } from "react";
 import { Html } from "@packages/utility";
-import { Button } from "@packages/ui";
+import { Button } from "@packages/components";
 
 type ActionIconProps = {
   ariaLabel: string;

@@ -1,7 +1,7 @@
 import { Html } from "@packages/utility";
 import { MouseEventHandler } from "react";
 import { SessionTab, tabGroupColorToHex } from "@packages/tab-manager";
-import { Favicon } from "@packages/ui";
+import { Favicon } from "@packages/components";
 import { TabActions } from "./TabActions";
 
 type TabCardProps = {
