@@ -1,31 +1,16 @@
 import { Html } from "@packages/utility";
-import { Heading, Select, WindowCard } from "@packages/components";
+import { Heading, SelectWindow, WindowCard } from "@packages/components";
 import { WindowsApi } from "@packages/ext-api";
-import { useSession } from "@packages/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useWindows } from "@packages/hooks";
 
 export function SidePanelApp() {
-  const { session } = useSession();
-  const [currentWindowId, setCurrentWindowId] = useState<number | null>(null);
-  const [selectedWindowId, setSelectedWindowId] = useState<string>("");
-
-  useEffect(() => {
-    WindowsApi.getCurrent().then((win) => {
-      setCurrentWindowId(win.id!);
-      setSelectedWindowId(String(win.id!));
-    });
-  }, []);
-
-  const windowOptions = useMemo(() => {
-    const windowIds = Object.keys(session.windows).map(Number).sort((a, b) => a - b);
-    return windowIds.map((id, index) => ({
-      value: String(id),
-      label: `Window ${index + 1}${id === currentWindowId ? " (current)" : ""}`,
-    }));
-  }, [session.windows, currentWindowId]);
-
-  const selectedWindow = selectedWindowId ? session.windows[Number(selectedWindowId)] : null;
-  if (!selectedWindow) return null;
+  const {
+    windows,
+    currentWindowId,
+    selectedWindowId,
+    selectedWindow,
+    setSelectedWindowId,
+  } = useWindows();
 
   return (
     <div
@@ -43,11 +28,11 @@ export function SidePanelApp() {
         )}
       >
         <Heading>Total Tabs</Heading>
-        <Select
+        <SelectWindow
+          windows={windows}
+          currentWindowId={currentWindowId}
           value={selectedWindowId}
           onChange={setSelectedWindowId}
-          options={windowOptions}
-          placeholder="Select window..."
         />
       </div>
 
@@ -57,10 +42,12 @@ export function SidePanelApp() {
           "overflow-y-auto"
         )}
       >
-        <WindowCard
-          window={selectedWindow}
-          onClick={() => WindowsApi.update(selectedWindow.id, { focused: true })}
-        />
+        {selectedWindow ? (
+          <WindowCard
+            window={selectedWindow}
+            onClick={() => WindowsApi.update(selectedWindow.id, { focused: true })}
+          />
+        ) : null}
       </div>
     </div>
   );
