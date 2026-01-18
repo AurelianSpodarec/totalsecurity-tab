@@ -16,9 +16,11 @@
       "@packages/components": [ "packages/components/index.ts" ],
       "@packages/ext-api": [ "packages/ext-api/index.ts" ],
       "@packages/ext-treedux": [ "packages/ext-treedux/index.ts" ],
+      "@packages/features": [ "packages/features/index.ts" ],
       "@packages/hooks": [ "packages/hooks/index.ts" ],
       "@packages/state": [ "packages/state/index.ts" ],
       "@packages/tab-manager": [ "packages/tab-manager/index.ts" ],
+      "@packages/ui": [ "packages/ui/index.ts" ],
       "@packages/utility": [ "packages/utility/index.ts" ]
     }
   },

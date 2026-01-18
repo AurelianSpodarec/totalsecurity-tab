@@ -3,22 +3,30 @@ import { MouseEventHandler } from "react";
 import { SessionWindow } from "@packages/tab-manager";
 import { Reorder } from "motion/react";
 import { TabCard } from "./TabCard";
-import { useTabReorder } from "@packages/hooks";
+import { useTabReorder } from "../hooks/useTabReorder";
 
-type WindowCardProps = {
+type TabListProps = {
   className?: string;
   window: SessionWindow;
   onMouseEnter?: MouseEventHandler<HTMLDivElement>;
   onClick?: MouseEventHandler<HTMLDivElement>;
 };
 
-export function WindowCard({
+export function TabList({
   window,
   onClick,
   onMouseEnter,
   className,
-}: WindowCardProps) {
-  const { tabs, handleReorder, handleDragStart, handleDragEnd, handleTabClick } = useTabReorder({ window });
+}: TabListProps) {
+  const {
+    tabs,
+    handleReorder,
+    handleDragStart,
+    handleDragEnd,
+    handleTabClick,
+    handleTabPin,
+    handleTabClose,
+  } = useTabReorder({ window });
 
   return (
     <div
@@ -36,7 +44,12 @@ export function WindowCard({
               onDragStart={() => handleDragStart(tab)}
               onDragEnd={handleDragEnd}
             >
-              <TabCard tab={tab} onClick={() => handleTabClick(tab)} />
+              <TabCard
+                tab={tab}
+                onClick={() => handleTabClick(tab)}
+                onPin={() => handleTabPin(tab)}
+                onClose={() => handleTabClose(tab)}
+              />
             </Reorder.Item>
           ))}
         </ul>

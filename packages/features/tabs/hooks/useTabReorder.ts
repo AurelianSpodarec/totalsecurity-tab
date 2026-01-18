@@ -1,11 +1,84 @@
 import { useEffect, useRef, useState } from "react";
 import { SessionTab, SessionWindow, clampTabIndexForPinned } from "@packages/tab-manager";
 import { TabsApi } from "@packages/ext-api";
-import { useTabMoveQueue } from "./UseTabMoveQueue";
 
 type UseTabReorderArgs = {
   window: SessionWindow;
 };
+
+type MoveRequest = {
+  tabId: number;
+  windowId: number;
+  index: number;
+  immediate?: boolean;
+};
+
+function useTabMoveQueue(onError?: (err: unknown) => void) {
+  const throttleMs = 75;
+  const moveTimeout = useRef<number | null>(null);
+  const moveInFlight = useRef(false);
+  const moveTabId = useRef<number | null>(null);
+  const moveWindowId = useRef<number | null>(null);
+  const pendingIndex = useRef<number | null>(null);
+  const lastCommittedIndex = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (moveTimeout.current) clearTimeout(moveTimeout.current);
+    };
+  }, []);
+
+  const flush = () => {
+    if (moveInFlight.current) return;
+    const tabId = moveTabId.current;
+    const windowId = moveWindowId.current;
+    const index = pendingIndex.current;
+    if (!tabId || !windowId || index == null) return;
+
+    pendingIndex.current = null;
+    if (lastCommittedIndex.current === index) return;
+
+    moveInFlight.current = true;
+    TabsApi.move(tabId, { index, windowId })
+      .then(() => { lastCommittedIndex.current = index; })
+      .catch((err) => { onError?.(err); })
+      .finally(() => {
+        moveInFlight.current = false;
+        if (pendingIndex.current != null) flush();
+      });
+  };
+
+  const reset = () => {
+    if (moveTimeout.current) clearTimeout(moveTimeout.current);
+    moveTimeout.current = null;
+    moveInFlight.current = false;
+    moveTabId.current = null;
+    moveWindowId.current = null;
+    pendingIndex.current = null;
+    lastCommittedIndex.current = null;
+  };
+
+  const requestMove = ({ tabId, windowId, index, immediate }: MoveRequest) => {
+    moveTabId.current = tabId;
+    moveWindowId.current = windowId;
+    pendingIndex.current = index;
+
+    if (immediate) {
+      if (moveTimeout.current) clearTimeout(moveTimeout.current);
+      moveTimeout.current = null;
+      flush();
+      return;
+    }
+
+    if (moveTimeout.current) return;
+    moveTimeout.current = setTimeout(() => {
+      moveTimeout.current = null;
+      flush();
+    }, throttleMs) as unknown as number;
+  };
+
+  return { requestMove, reset };
+}
 
 export function useTabReorder({ window }: UseTabReorderArgs) {
   const [tabs, setTabs] = useState(window.tabs);
@@ -16,14 +89,11 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   const lastRequestedIndex = useRef<number | null>(null);
   const originalDraggedTab = useRef<SessionTab | null>(null);
 
-  const moveQueue = useTabMoveQueue({
-    throttleMs: 75,
-    onError: (err) => {
-      console.error(err);
-      setTabs(window.tabs);
-      tabsRef.current = window.tabs;
-      lastRequestedIndex.current = null;
-    },
+  const moveQueue = useTabMoveQueue((err) => {
+    console.error(err);
+    setTabs(window.tabs);
+    tabsRef.current = window.tabs;
+    lastRequestedIndex.current = null;
   });
 
   useEffect(() => {
@@ -55,10 +125,8 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   const computeGroupFromNeighbors = (nextTabs: SessionTab[], targetIndex: number) => {
     const leftNeighbor = nextTabs[targetIndex - 1];
     const rightNeighbor = nextTabs[targetIndex + 1];
-
     const leftOriginal = leftNeighbor ? getOriginalTab(leftNeighbor.id) : undefined;
     const rightOriginal = rightNeighbor ? getOriginalTab(rightNeighbor.id) : undefined;
-
     const leftGroupId = leftOriginal?.groupId ?? -1;
     const rightGroupId = rightOriginal?.groupId ?? -1;
 
@@ -90,7 +158,6 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
     }
 
     const { groupId, groupColor } = computeGroupFromNeighbors(nextTabs, nextIndex);
-
     const updatedTabs = nextTabs.map((t) =>
       t.id === tabId ? { ...t, groupId, groupColor } : t
     );
@@ -146,11 +213,21 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
     return TabsApi.update(tab.id, { active: true });
   };
 
+  const handleTabPin = (tab: SessionTab) => {
+    return TabsApi.update(tab.id, { pinned: !tab.pinned });
+  };
+
+  const handleTabClose = (tab: SessionTab) => {
+    return TabsApi.remove(tab.id);
+  };
+
   return {
     tabs,
     handleReorder,
     handleDragStart,
     handleDragEnd,
     handleTabClick,
+    handleTabPin,
+    handleTabClose,
   };
 }

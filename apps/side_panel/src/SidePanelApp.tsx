@@ -1,5 +1,6 @@
 import { Html } from "@packages/utility";
-import { Heading, SelectWindow, WindowCard } from "@packages/components";
+import { Heading } from "@packages/components";
+import { TabList, SelectWindow } from "@packages/features";
 import { WindowsApi } from "@packages/ext-api";
 import { useWindows } from "@packages/hooks";
 
@@ -43,7 +44,7 @@ export function SidePanelApp() {
         )}
       >
         {selectedWindow ? (
-          <WindowCard
+          <TabList
             window={selectedWindow}
             onClick={() => WindowsApi.update(selectedWindow.id, { focused: true })}
           />
