@@ -10,5 +10,8 @@
 ### Part 1
 
 - A) Select component
-    Start: 14:42 — End: 14:47
+  Start: ~14:42 - End: ~14:47
 - B) Window switching
+  Start: ~14:52 - End: ~14:58
+
+### Part 2

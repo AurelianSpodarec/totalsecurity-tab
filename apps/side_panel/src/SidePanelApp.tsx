@@ -1,19 +1,31 @@
 import { Html } from "@packages/utility";
-import { Heading, WindowCard } from "@packages/components";
+import { Heading, Select, WindowCard } from "@packages/components";
 import { WindowsApi } from "@packages/ext-api";
 import { useSession } from "@packages/hooks";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function SidePanelApp() {
   const { session } = useSession();
   const [currentWindowId, setCurrentWindowId] = useState<number | null>(null);
+  const [selectedWindowId, setSelectedWindowId] = useState<string>("");
 
   useEffect(() => {
-    WindowsApi.getCurrent().then((window) => setCurrentWindowId(window.id!));
+    WindowsApi.getCurrent().then((win) => {
+      setCurrentWindowId(win.id!);
+      setSelectedWindowId(String(win.id!));
+    });
   }, []);
 
-  const window = currentWindowId && session.windows[currentWindowId];
-  if (!window) return null;
+  const windowOptions = useMemo(() => {
+    const windowIds = Object.keys(session.windows).map(Number).sort((a, b) => a - b);
+    return windowIds.map((id, index) => ({
+      value: String(id),
+      label: `Window ${index + 1}${id === currentWindowId ? " (current)" : ""}`,
+    }));
+  }, [session.windows, currentWindowId]);
+
+  const selectedWindow = selectedWindowId ? session.windows[Number(selectedWindowId)] : null;
+  if (!selectedWindow) return null;
 
   return (
     <div
@@ -26,11 +38,17 @@ export function SidePanelApp() {
     >
       <div
         className={Html.joinClasses(
-          "flex flex-col gap-1",
+          "flex flex-col gap-3",
           "px-5"
         )}
       >
         <Heading>Total Tabs</Heading>
+        <Select
+          value={selectedWindowId}
+          onChange={setSelectedWindowId}
+          options={windowOptions}
+          placeholder="Select window..."
+        />
       </div>
 
       <div
@@ -40,8 +58,8 @@ export function SidePanelApp() {
         )}
       >
         <WindowCard
-          window={window}
-          onClick={() => WindowsApi.update(window.id, { focused: true })}
+          window={selectedWindow}
+          onClick={() => WindowsApi.update(selectedWindow.id, { focused: true })}
         />
       </div>
     </div>
