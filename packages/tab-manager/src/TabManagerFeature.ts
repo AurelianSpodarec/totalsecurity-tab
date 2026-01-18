@@ -26,10 +26,12 @@ export class TabManagerFeature {
         const groupId = tab.groupId ?? -1;
         let groupColor;
 
+        let groupTitle;
         if (groupId !== -1) {
           try {
             const group = await TabGroupsApi.get(groupId);
             groupColor = group.color;
+            groupTitle = group.title;
           } catch {
             // Group may have been deleted; leave colour undefined.
           }
@@ -45,6 +47,7 @@ export class TabManagerFeature {
           active: tab.active,
           groupId,
           groupColor,
+          groupTitle,
         };
       })
     );

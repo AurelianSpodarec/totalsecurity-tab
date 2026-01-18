@@ -10,4 +10,5 @@ export type SessionTab = {
   active: boolean;
   groupId: number;
   groupColor?: TabGroupColor;
+  groupTitle?: string;
 };

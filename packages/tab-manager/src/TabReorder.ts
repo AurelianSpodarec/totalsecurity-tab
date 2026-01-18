@@ -18,6 +18,17 @@ export const tabGroupColorToHex = (color?: TabGroupColor): string | undefined =>
   return TAB_GROUP_COLOR_HEX[color];
 };
 
+export const tabGroupColorToBackgroundHex = (color?: TabGroupColor): string | undefined => {
+  if (!color) return undefined;
+  const hex = TAB_GROUP_COLOR_HEX[color];
+  if (!hex) return undefined;
+  // Convert hex to rgba with low opacity for lighter background
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, 0.15)`;
+};
+
 export const getPinnedTabCount = (tabs: Array<SessionTab>): number => {
   return tabs.filter((t) => t.pinned).length;
 };

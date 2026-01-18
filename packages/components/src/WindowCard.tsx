@@ -26,6 +26,7 @@ export function WindowCard({
   const isDragging = useRef(false);
   const draggingTabId = useRef<number | null>(null);
   const lastRequestedIndex = useRef<number | null>(null);
+  const originalDraggedTab = useRef<SessionTab | null>(null);
 
   const moveQueue = useTabMoveQueue({
     throttleMs: 75,
@@ -64,16 +65,61 @@ export function WindowCard({
   };
 
   const handleTabsReorder = (nextTabs: Array<SessionTab>) => {
-    tabsRef.current = nextTabs;
-    setTabs(nextTabs);
-
-    if (!isDragging.current) return;
+    if (!isDragging.current) {
+      tabsRef.current = nextTabs;
+      setTabs(nextTabs);
+      return;
+    }
 
     const tabId = draggingTabId.current;
-    if (!tabId) return;
+    if (!tabId) {
+      tabsRef.current = nextTabs;
+      setTabs(nextTabs);
+      return;
+    }
 
     const nextIndex = nextTabs.findIndex((t) => t.id === tabId);
-    if (nextIndex < 0) return;
+    if (nextIndex < 0) {
+      tabsRef.current = nextTabs;
+      setTabs(nextTabs);
+      return;
+    }
+
+    // Use original window.tabs for group lookup (local state may have modified groupIds)
+    const getOriginalTab = (id: number) => window.tabs.find((t) => t.id === id);
+
+    const leftNeighbor = nextTabs[nextIndex - 1];
+    const rightNeighbor = nextTabs[nextIndex + 1];
+
+    const leftOriginal = leftNeighbor ? getOriginalTab(leftNeighbor.id) : undefined;
+    const rightOriginal = rightNeighbor ? getOriginalTab(rightNeighbor.id) : undefined;
+    const leftGroupId = leftOriginal?.groupId ?? -1;
+    const rightGroupId = rightOriginal?.groupId ?? -1;
+    const leftGroupColor = leftOriginal?.groupColor;
+    const rightGroupColor = rightOriginal?.groupColor;
+
+    const originalTab = originalDraggedTab.current;
+    const originalGroupId = originalTab?.groupId ?? -1;
+    const originalGroupColor = originalTab?.groupColor;
+
+    let previewGroupId = -1;
+    let previewGroupColor: SessionTab["groupColor"] = undefined;
+
+    if (leftGroupId !== -1 && leftGroupId === rightGroupId) {
+      // Dropping between two tabs in the same group -> join that group
+      previewGroupId = leftGroupId;
+      previewGroupColor = leftGroupColor;
+    }
+    // Otherwise -> no group (must drop between grouped tabs to join)
+
+    const updatedTabs = nextTabs.map((t) =>
+      t.id === tabId
+        ? { ...t, groupId: previewGroupId, groupColor: previewGroupColor }
+        : t
+    );
+
+    tabsRef.current = updatedTabs;
+    setTabs(updatedTabs);
 
     enqueueChromeTabMove(tabId, nextIndex);
   };
@@ -95,9 +141,11 @@ export function WindowCard({
               <Reorder.Item
                 key={tab.id}
                 value={tab}
+                as="li"
                 onDragStart={() => {
                   isDragging.current = true;
                   draggingTabId.current = tab.id;
+                  originalDraggedTab.current = tab;
                   lastRequestedIndex.current = null;
                   moveQueue.reset();
                 }}
@@ -105,6 +153,7 @@ export function WindowCard({
                   const tabId = draggingTabId.current;
                   isDragging.current = false;
                   draggingTabId.current = null;
+                  originalDraggedTab.current = null;
 
                   if (!tabId) return;
 
@@ -114,26 +163,37 @@ export function WindowCard({
 
                   enqueueChromeTabMove(tabId, nextIndex, true);
 
-                  const movedTab = nextTabs[nextIndex];
+                  const getOriginalTab = (id: number) => window.tabs.find((t) => t.id === id);
+                  const originalMovedTab = getOriginalTab(tabId);
+
                   const leftNeighbor = nextTabs[nextIndex - 1];
                   const rightNeighbor = nextTabs[nextIndex + 1];
+                  const leftOriginal = leftNeighbor ? getOriginalTab(leftNeighbor.id) : undefined;
+                  const rightOriginal = rightNeighbor ? getOriginalTab(rightNeighbor.id) : undefined;
 
-                  const leftGroupId = leftNeighbor?.groupId ?? -1;
-                  const rightGroupId = rightNeighbor?.groupId ?? -1;
+                  const leftGroupId = leftOriginal?.groupId ?? -1;
+                  const rightGroupId = rightOriginal?.groupId ?? -1;
 
-                  // Heuristic: if you drop next to tabs in a group, join that group.
-                  // If you drop between two different groups, do nothing (avoid picking the wrong one).
                   let desiredGroupId = -1;
+                  let desiredGroupColor: SessionTab["groupColor"] = undefined;
 
-                  if (leftGroupId !== -1 && rightGroupId !== -1 && leftGroupId !== rightGroupId) {
-                    desiredGroupId = -1;
-                  } else if (leftGroupId !== -1) {
+                  if (leftGroupId !== -1 && leftGroupId === rightGroupId) {
+                    // Dropping between two tabs in the same group -> join that group
                     desiredGroupId = leftGroupId;
-                  } else if (rightGroupId !== -1) {
-                    desiredGroupId = rightGroupId;
+                    desiredGroupColor = leftOriginal?.groupColor;
                   }
+                  // Otherwise -> no group (must drop between grouped tabs to join)
 
-                  if (desiredGroupId !== movedTab.groupId) {
+                  const originalGroupId = originalMovedTab?.groupId ?? -1;
+                  if (desiredGroupId !== originalGroupId) {
+                    const updatedTabs = nextTabs.map((t) =>
+                      t.id === tabId
+                        ? { ...t, groupId: desiredGroupId, groupColor: desiredGroupColor }
+                        : t
+                    );
+                    tabsRef.current = updatedTabs;
+                    setTabs(updatedTabs);
+
                     if (desiredGroupId === -1) {
                       TabsApi.ungroup(tabId).catch(console.error);
                     } else {
