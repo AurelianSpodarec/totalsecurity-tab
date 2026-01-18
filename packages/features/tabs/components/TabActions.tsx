@@ -1,6 +1,6 @@
 import { MouseEventHandler } from "react";
 import { Cross2Icon, DrawingPinFilledIcon, DrawingPinIcon } from "@radix-ui/react-icons";
-import { IconButton } from "@packages/components";
+import { ActionIcon } from "./ActionIcon";
 
 type TabActionsProps = {
   pinned: boolean;
@@ -12,15 +12,16 @@ type TabActionsProps = {
 export function TabActions({ pinned, active, onPin, onClose }: TabActionsProps) {
   return (
     <span className="flex gap-3">
-      <IconButton
+      <ActionIcon
+        ariaLabel={pinned ? "Unpin tab" : "Pin tab"}
         className={pinned && !active ? "text-blue-500" : "text-white"}
         onClick={onPin}
       >
         {pinned ? <DrawingPinFilledIcon /> : <DrawingPinIcon />}
-      </IconButton>
-      <IconButton onClick={onClose}>
+      </ActionIcon>
+      <ActionIcon ariaLabel="Close tab" onClick={onClose}>
         <Cross2Icon />
-      </IconButton>
+      </ActionIcon>
     </span>
   );
 }

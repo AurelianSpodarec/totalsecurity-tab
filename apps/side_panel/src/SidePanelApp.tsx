@@ -1,5 +1,4 @@
 import { Html } from "@packages/utility";
-import { Heading } from "@packages/components";
 import { TabList, SelectWindow } from "@packages/features";
 import { WindowsApi } from "@packages/ext-api";
 import { useWindows } from "@packages/hooks";
@@ -28,7 +27,14 @@ export function SidePanelApp() {
           "px-5"
         )}
       >
-        <Heading>Total Tabs</Heading>
+        <h1
+          className={Html.joinClasses(
+            "text-2xl font-semibold",
+            "text-gray-900 dark:text-white"
+          )}
+        >
+          Total Tabs
+        </h1>
         <SelectWindow
           windows={windows}
           currentWindowId={currentWindowId}

@@ -1,15 +1,18 @@
 import { MouseEventHandler, ReactNode } from "react";
 import { Html } from "@packages/utility";
+import { Button } from "@packages/ui";
 
-type IconButtonProps = {
+type ActionIconProps = {
+  ariaLabel: string;
   className?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   children: ReactNode;
 };
 
-export function IconButton({ className, onClick, children }: IconButtonProps) {
+export function ActionIcon({ ariaLabel, className, onClick, children }: ActionIconProps) {
   return (
-    <button
+    <Button
+      aria-label={ariaLabel}
       onClick={onClick}
       className={Html.joinClasses("relative", "cursor-pointer", className)}
     >
@@ -22,7 +25,7 @@ export function IconButton({ className, onClick, children }: IconButtonProps) {
           "hover:bg-gray-400/30"
         )}
       />
-      <span className={"relative pointer-events-none"}>{children}</span>
-    </button>
+      <span className="relative pointer-events-none">{children}</span>
+    </Button>
   );
 }

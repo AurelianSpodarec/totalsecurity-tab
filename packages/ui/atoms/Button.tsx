@@ -3,15 +3,13 @@ import React from "react";
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
-export function Button(props: ButtonProps): React.ReactElement {
-  const {
-    type = "button",
-    disabled = false,
-    className = "",
-    children,
-    ...rest
-  } = props;
-
+export function Button({
+  type = "button",
+  disabled = false,
+  className = "",
+  children,
+  ...rest
+}: ButtonProps) {
   return (
     <button
       type={type}
