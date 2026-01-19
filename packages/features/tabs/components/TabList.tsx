@@ -1,11 +1,15 @@
 import { Html } from "@packages/utility";
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { SessionWindow } from "@packages/tab-manager";
 import { AnimatePresence, Reorder } from "motion/react";
-import { TabItem } from "./TabItem";
-import { TabGroupEditPopup, TabGroupHeader } from "./TabGroup";
-import { useTabReorder, getItemKey, TabListItem } from "../hooks/useTabReorder";
+import { TabGroupEditPopup } from "./TabGroup";
+import type { TabListItem } from "../hooks/useTabReorder";
+import { useTabReorder } from "../hooks/useTabReorder";
 import { useTabGroupEdit } from "../hooks/useTabGroupEdit";
+import { useCollapsedGroups } from "../hooks/useCollapsedGroups";
+import { useVisibleReorder } from "../hooks/useVisibleReorder";
+import { ReorderableGroupHeader } from "./TabList/ReorderableGroupHeader";
+import { ReorderableTabItem } from "./TabList/ReorderableTabItem";
 
 type TabListProps = {
   className?: string;
@@ -30,9 +34,8 @@ export function TabList({
     handleTabClose,
   } = useTabReorder({ window });
 
-  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  const { collapsedGroups, toggleGroup } = useCollapsedGroups();
   const [isDragging, setIsDragging] = useState(false);
-  const [reorderKeys, setReorderKeys] = useState<string[]>([]);
 
   const {
     activeEditingGroup,
@@ -42,27 +45,6 @@ export function TabList({
     updateColor,
   } = useTabGroupEdit(items);
 
-  const toggleGroup = (groupId: string) => {
-    setCollapsedGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(groupId)) {
-        next.delete(groupId);
-      } else {
-        next.add(groupId);
-      }
-      return next;
-    });
-  };
-
-  // Filter items for Reorder.Group - exclude tabs in collapsed groups
-  const visibleItems = useMemo(() => {
-    return items.filter((item) => {
-      if (item.type === "group") return true;
-      const groupId = item.tab.groupId;
-      if (groupId === -1) return true;
-      return !collapsedGroups.has(String(groupId));
-    });
-  }, [items, collapsedGroups]);
 
   const handleItemDragStart = useCallback(
     (item: TabListItem) => {
@@ -77,46 +59,12 @@ export function TabList({
     setIsDragging(false);
   }, [handleDragEnd]);
 
-  const itemsByKey = useMemo(() => {
-    return new Map(items.map((it) => [getItemKey(it), it] as const));
-  }, [items]);
-
-  const visibleKeys = useMemo(() => {
-    return visibleItems.map(getItemKey);
-  }, [visibleItems]);
-
-  // Keep Framer Motion Reorder stable while dragging:
-  // - During drag, Reorder continuously emits the next key order.
-  // - Outside drag, we sync to the derived keys from the current data model.
-  useEffect(() => {
-    if (isDragging) return;
-    setReorderKeys(visibleKeys);
-  }, [visibleKeys, isDragging]);
-
-  // When reordering visible items, reconstruct full item list with collapsed tabs.
-  // Note: Reorder is driven by stable string keys so dragging doesn't get cancelled
-  // when tab objects are cloned/updated mid-drag.
-  const handleVisibleReorder = (newVisibleKeys: string[]) => {
-    setReorderKeys(newVisibleKeys);
-
-    const newVisibleItems = newVisibleKeys
-      .map((key) => itemsByKey.get(key))
-      .filter((it): it is TabListItem => Boolean(it));
-
-    const result: TabListItem[] = [];
-    for (const item of newVisibleItems) {
-      result.push(item);
-      // After a collapsed group header, insert its tabs.
-      if (item.type === "group" && collapsedGroups.has(String(item.groupId))) {
-        const groupTabs = items.filter(
-          (i) => i.type === "tab" && i.tab.groupId === item.groupId
-        );
-        result.push(...groupTabs);
-      }
-    }
-
-    handleReorder(result);
-  };
+  const { reorderKeys, itemsByKey, handleVisibleReorder } = useVisibleReorder({
+    items,
+    collapsedGroups,
+    isDragging,
+    onReorder: handleReorder,
+  });
 
   return (
     <div
@@ -150,80 +98,35 @@ export function TabList({
               const itemSpacing = isLast ? 0 : 12;
 
               if (item.type === "group") {
-                const groupIdStr = String(item.groupId);
-                const isExpanded = !collapsedGroups.has(groupIdStr);
-
                 return (
-                  <Reorder.Item
+                  <ReorderableGroupHeader
                     key={key}
-                    value={key}
-                    as="div"
-                    style={{ marginBottom: itemSpacing }}
-                    onDragStart={() => handleItemDragStart(item)}
-                    onDragEnd={() => handleItemDragEnd()}
-                  >
-                    <TabGroupHeader
-                      title={
-                        activeEditingGroup?.groupId === item.groupId
-                          ? activeEditingGroup.draftTitle
-                          : item.groupTitle
-                      }
-                      groupColor={
-                        activeEditingGroup?.groupId === item.groupId
-                          ? activeEditingGroup.draftColor
-                          : item.groupColor
-                      }
-                      isExpanded={isExpanded}
-                      onToggle={() => toggleGroup(groupIdStr)}
-                      onEdit={(anchorRect) => {
-                        openEditor({
-                          groupId: item.groupId,
-                          anchorRect,
-                          initialTitle: item.groupTitle ?? "",
-                          initialColor: item.groupColor ?? "grey",
-                        });
-                      }}
-                    />
-                  </Reorder.Item>
+                    itemKey={key}
+                    item={item}
+                    itemSpacing={itemSpacing}
+                    collapsedGroups={collapsedGroups}
+                    toggleGroup={toggleGroup}
+                    activeEditingGroup={activeEditingGroup}
+                    openEditor={openEditor}
+                    handleItemDragStart={handleItemDragStart}
+                    handleItemDragEnd={handleItemDragEnd}
+                  />
                 );
               }
 
-              const tab = item.tab;
-              const displayTab =
-                activeEditingGroup?.groupId === tab.groupId
-                  ? {
-                      ...tab,
-                      groupTitle: activeEditingGroup.draftTitle,
-                      groupColor: activeEditingGroup.draftColor,
-                    }
-                  : tab;
-
               return (
-                <Reorder.Item
+                <ReorderableTabItem
                   key={key}
-                  value={key}
-                  as="div"
-                  style={{ overflow: "hidden", willChange: "height, opacity", marginBottom: itemSpacing }}
-                  initial={{ height: 0, opacity: 0, marginBottom: 0 }}
-                  animate={{ height: "auto", opacity: 1, marginBottom: itemSpacing }}
-                  exit={{ height: 0, opacity: 0, marginBottom: 0 }}
-                  transition={{
-                    type: "tween",
-                    ease: "easeInOut",
-                    height: { duration: 0.12 },
-                    opacity: { duration: 0.08 },
-                    marginBottom: { duration: 0.08 },
-                  }}
-                  onDragStart={() => handleItemDragStart(item)}
-                  onDragEnd={() => handleItemDragEnd()}
-                >
-                  <TabItem
-                    tab={displayTab}
-                    onClick={() => handleTabClick(tab)}
-                    onPin={() => handleTabPin(tab)}
-                    onClose={() => handleTabClose(tab)}
-                  />
-                </Reorder.Item>
+                  itemKey={key}
+                  item={item}
+                  itemSpacing={itemSpacing}
+                  activeEditingGroup={activeEditingGroup}
+                  handleTabClick={handleTabClick}
+                  handleTabPin={handleTabPin}
+                  handleTabClose={handleTabClose}
+                  handleItemDragStart={handleItemDragStart}
+                  handleItemDragEnd={handleItemDragEnd}
+                />
               );
             })}
           </AnimatePresence>
