@@ -47,9 +47,13 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
         />
       )}
 
-      <span className="flex items-center gap-3 truncate">
-        <Favicon url={faviconUrl} alt={`${title} favicon`} className="pointer-events-none" />
-        <span className="truncate" title={title}>
+      <span className="flex flex-1 min-w-0 items-center gap-3">
+        <Favicon
+          url={faviconUrl}
+          alt={`${title} favicon`}
+          className="pointer-events-none shrink-0"
+        />
+        <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden tmit-fade-right-actions" title={title}>
           {title}
         </span>
       </span>
@@ -57,12 +61,20 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
       {(onPin || onClose) && (
         <span
           className={Html.joinClasses(
-            "flex",
+            // Absolute overlay so the title can use the full card width.
+            "absolute inset-y-0 right-0",
+            "z-10",
+            "flex items-center",
+            // Background: inherit from the TabCard (so it matches hover/active states),
+            // then fade in from the left edge.
+            "bg-inherit tmit-fade-left-actions",
+            // Dedicated fade strip on the left + right padding matching the card.
+            "pl-4 pr-3",
+            "rounded-r",
             "transition-opacity duration-150",
             pinned
               ? "opacity-100 pointer-events-auto"
               : Html.joinClasses(
-                  // Keep layout stable but only reveal actions when the card is interacted with.
                   "opacity-0 pointer-events-none",
                   "group-hover:opacity-100 group-hover:pointer-events-auto",
                   "group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
