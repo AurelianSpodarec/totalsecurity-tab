@@ -19,7 +19,7 @@ export function ActionIcon({ ariaLabel, className, onClick, children }: ActionIc
       <span
         className={Html.joinClasses(
           "absolute left-1/2 top-1/2 transform -translate-1/2",
-          "w-[24px] h-[24px]",
+          "size-6",
           "rounded",
           "transition-colors duration-200",
           "hover:bg-gray-400/30"

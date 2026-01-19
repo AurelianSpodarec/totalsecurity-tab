@@ -3,11 +3,9 @@ import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } 
 import { SessionWindow } from "@packages/tab-manager";
 import { AnimatePresence, Reorder } from "motion/react";
 import { TabGroupColor, TabGroupsApi, TabGroupsUpdateInfo } from "@packages/ext-api";
-import { TabCard } from "./TabCard";
-import { GroupEditPopup } from "./GroupEditPopup";
-import { GroupTitleCard } from "./GroupTitleCard";
+import { TabItem } from "./TabItem";
+import { TabGroupEditPopup, TabGroupHeader } from "./TabGroup";
 import { useTabReorder, getItemKey, TabListItem } from "../hooks/useTabReorder";
-
 
 type TabListProps = {
   className?: string;
@@ -188,7 +186,7 @@ export function TabList({
       onMouseEnter={onMouseEnter}
     >
       {activeEditingGroup && (
-        <GroupEditPopup
+        <TabGroupEditPopup
           key={activeEditingGroup.groupId}
           groupId={activeEditingGroup.groupId}
           title={activeEditingGroup.draftTitle}
@@ -236,7 +234,7 @@ export function TabList({
                     onDragStart={() => handleItemDragStart(item)}
                     onDragEnd={() => handleItemDragEnd()}
                   >
-                    <GroupTitleCard
+                    <TabGroupHeader
                       title={
                         activeEditingGroup?.groupId === item.groupId
                           ? activeEditingGroup.draftTitle
@@ -295,7 +293,7 @@ export function TabList({
                   onDragStart={() => handleItemDragStart(item)}
                   onDragEnd={() => handleItemDragEnd()}
                 >
-                  <TabCard
+                  <TabItem
                     tab={displayTab}
                     onClick={() => handleTabClick(tab)}
                     onPin={() => handleTabPin(tab)}

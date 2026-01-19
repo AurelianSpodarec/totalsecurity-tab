@@ -3,7 +3,7 @@ import { Html } from "@packages/utility";
 import { TabGroupColor } from "@packages/ext-api";
 import { useRef } from "react";
 
-type GroupTitleCardProps = {
+type TabGroupHeaderProps = {
   title?: string;
   groupColor?: TabGroupColor;
   isExpanded?: boolean;
@@ -12,14 +12,14 @@ type GroupTitleCardProps = {
   className?: string;
 };
 
-export function GroupTitleCard({
+export function TabGroupHeader({
   title,
   groupColor,
   isExpanded = true,
   onToggle,
   onEdit,
   className,
-}: GroupTitleCardProps) {
+}: TabGroupHeaderProps) {
   const resolvedTitle = title?.trim() ? title : "";
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -96,4 +96,3 @@ export function GroupTitleCard({
     </div>
   );
 }
-

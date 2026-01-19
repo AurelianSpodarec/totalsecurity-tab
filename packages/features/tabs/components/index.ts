@@ -1,6 +1,4 @@
-export { ActionIcon } from "./ActionIcon";
-export { GroupEditPopup } from "./GroupEditPopup";
-export { GroupTitleCard } from "./GroupTitleCard";
-export { TabActions } from "./TabActions";
-export { TabCard } from "./TabCard";
+export { ActionIcon } from "./_shared";
+export { TabItem, TabItemActions } from "./TabItem";
+export { TabGroupHeader, TabGroupEditPopup } from "./TabGroup";
 export { TabList } from "./TabList";

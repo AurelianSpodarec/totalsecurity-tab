@@ -2,6 +2,7 @@ import { Html } from "@packages/utility";
 import type { TabGroupColor } from "@packages/ext-api";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { Button } from "@packages/components";
 
 const TAB_GROUP_COLORS: TabGroupColor[] = [
   "grey",
@@ -15,7 +16,7 @@ const TAB_GROUP_COLORS: TabGroupColor[] = [
   "orange",
 ];
 
-type GroupEditPopupProps = {
+type TabGroupEditPopupProps = {
   groupId: number;
   title: string;
   color: TabGroupColor;
@@ -25,7 +26,7 @@ type GroupEditPopupProps = {
   onClose: () => void;
 };
 
-export function GroupEditPopup({
+export function TabGroupEditPopup({
   groupId,
   title,
   color,
@@ -33,7 +34,7 @@ export function GroupEditPopup({
   onTitleChange,
   onColorChange,
   onClose,
-}: GroupEditPopupProps) {
+}: TabGroupEditPopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -133,9 +134,8 @@ export function GroupEditPopup({
             {TAB_GROUP_COLORS.map((c) => {
               const selected = c === color;
               return (
-                <button
+                <Button
                   key={c}
-                  type="button"
                   data-tab-group-color={c}
                   className={Html.joinClasses(
                     "w-5 h-5",

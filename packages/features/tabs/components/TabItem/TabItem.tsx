@@ -2,9 +2,9 @@ import { MouseEventHandler } from "react";
 import { Html } from "@packages/utility";
 import { SessionTab } from "@packages/tab-manager";
 import { Favicon } from "@packages/components";
-import { TabActions } from "./TabActions";
+import { TabItemActions } from "./TabItemActions";
 
-type TabCardProps = {
+type TabItemProps = {
   tab: SessionTab;
   className?: string;
   onClick?: MouseEventHandler<HTMLDivElement>;
@@ -12,7 +12,7 @@ type TabCardProps = {
   onClose?: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProps) {
+export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProps) {
   const { faviconUrl, title, pinned, active, groupColor } = tab;
 
   const handlePin: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -61,14 +61,10 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
       {(onPin || onClose) && (
         <span
           className={Html.joinClasses(
-            // Absolute overlay so the title can use the full card width.
             "absolute inset-y-0 right-0",
             "z-10",
             "flex items-center",
-            // Background: inherit from the TabCard (so it matches hover/active states),
-            // then fade in from the left edge.
             "bg-inherit tmit-fade-left-actions",
-            // Dedicated fade strip on the left + right padding matching the card.
             "pl-4 pr-3",
             "rounded-r",
             "transition-opacity duration-150",
@@ -81,7 +77,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
                 )
           )}
         >
-          <TabActions
+          <TabItemActions
             pinned={pinned}
             active={active}
             onPin={handlePin}

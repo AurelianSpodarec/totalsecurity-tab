@@ -2,14 +2,14 @@ import { MouseEventHandler } from "react";
 import { Cross2Icon, DrawingPinFilledIcon, DrawingPinIcon } from "@radix-ui/react-icons";
 import { ActionIcon } from "./ActionIcon";
 
-type TabActionsProps = {
+type TabItemActionsProps = {
   pinned: boolean;
   active: boolean;
   onPin: MouseEventHandler<HTMLButtonElement>;
   onClose: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function TabActions({ pinned, active, onPin, onClose }: TabActionsProps) {
+export function TabItemActions({ pinned, active, onPin, onClose }: TabItemActionsProps) {
   return (
     <span className="flex gap-3">
       <ActionIcon
