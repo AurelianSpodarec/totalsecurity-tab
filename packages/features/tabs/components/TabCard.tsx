@@ -42,7 +42,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
       onClick={onClick}
     >
       <span className="flex items-center gap-3 truncate">
-        <Favicon url={faviconUrl} alt={`${title} favicon`} />
+        <Favicon url={faviconUrl} alt={`${title} favicon`} className="pointer-events-none" />
         <span className="truncate" title={title}>
           {title}
         </span>
