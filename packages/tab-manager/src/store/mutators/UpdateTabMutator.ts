@@ -1,6 +1,6 @@
 import { AbstractMutator, Action } from "treeduxjs";
 import { TabManagerStore, TabManagerStoreInterface } from "../TabManagerStore";
-import { SessionTab } from "../Type/SessionTab";
+import type { SessionTab } from "../../types/SessionTab";
 
 type UpdateTabPayload = {
   windowId: number;
@@ -8,10 +8,6 @@ type UpdateTabPayload = {
   updates: Partial<Omit<SessionTab, "id">>;
 };
 
-/**
- * Granular mutator to update specific properties of a single tab
- * without replacing the entire window's tabs array.
- */
 export class UpdateTabMutator extends AbstractMutator<TabManagerStoreInterface> {
   public getType(): string {
     return `${TabManagerStore.KEY}/update_tab`;

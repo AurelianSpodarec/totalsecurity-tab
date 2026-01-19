@@ -1,4 +1,4 @@
-import { SessionTab } from "../Data/TabManager/Type/SessionTab";
+import type { SessionTab } from "../types/SessionTab";
 
 export const getPinnedTabCount = (tabs: Array<SessionTab>): number => {
   return tabs.filter((t) => t.pinned).length;

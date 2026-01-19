@@ -1,6 +1,6 @@
 import { RuntimeApi, SidePanelApi } from "@packages/ext-api";
 import { Redux } from "@packages/state";
-import { TabManager } from "@packages/tab-manager";
+import { TabManager } from "@packages/features";
 
 Redux.bootstrap();
 TabManager.bootstrap();

@@ -1,5 +1,5 @@
 import { getPinnedTabCount, clampTabIndexForPinned } from "./pinning";
-import { SessionTab } from "../Data/TabManager/Type/SessionTab";
+import type { SessionTab } from "../types/SessionTab";
 
 const createTab = (overrides: Partial<SessionTab> = {}): SessionTab => ({
   id: Math.floor(Math.random() * 10000),
@@ -55,16 +55,9 @@ describe("clampTabIndexForPinned", () => {
         createTab({ id: 4, pinned: false, index: 3 }),
       ];
 
-      // Pinned tab trying to move to index 0 - allowed
       expect(clampTabIndexForPinned(tabs, 1, 0)).toBe(0);
-
-      // Pinned tab trying to move to index 1 - allowed (last pinned position)
       expect(clampTabIndexForPinned(tabs, 1, 1)).toBe(1);
-
-      // Pinned tab trying to move past pinned region - clamped to 1
       expect(clampTabIndexForPinned(tabs, 1, 5)).toBe(1);
-
-      // Negative index clamped to 0
       expect(clampTabIndexForPinned(tabs, 1, -1)).toBe(0);
     });
 
@@ -74,7 +67,6 @@ describe("clampTabIndexForPinned", () => {
         createTab({ id: 2, pinned: false, index: 1 }),
       ];
 
-      // Single pinned tab can only be at index 0
       expect(clampTabIndexForPinned(tabs, 1, 0)).toBe(0);
       expect(clampTabIndexForPinned(tabs, 1, 5)).toBe(0);
     });
@@ -89,15 +81,10 @@ describe("clampTabIndexForPinned", () => {
         createTab({ id: 4, pinned: false, index: 3 }),
       ];
 
-      // Unpinned tab trying to move to pinned region - clamped to pinnedCount
       expect(clampTabIndexForPinned(tabs, 3, 0)).toBe(2);
       expect(clampTabIndexForPinned(tabs, 3, 1)).toBe(2);
-
-      // Unpinned tab moving within unpinned region - allowed
       expect(clampTabIndexForPinned(tabs, 3, 2)).toBe(2);
       expect(clampTabIndexForPinned(tabs, 3, 3)).toBe(3);
-
-      // Unpinned tab moving past end - clamped to last index
       expect(clampTabIndexForPinned(tabs, 3, 10)).toBe(3);
     });
 
@@ -108,7 +95,6 @@ describe("clampTabIndexForPinned", () => {
         createTab({ id: 3, pinned: false, index: 2 }),
       ];
 
-      // Any position is valid when no pinned tabs
       expect(clampTabIndexForPinned(tabs, 1, 0)).toBe(0);
       expect(clampTabIndexForPinned(tabs, 1, 1)).toBe(1);
       expect(clampTabIndexForPinned(tabs, 1, 2)).toBe(2);

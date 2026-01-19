@@ -1,5 +1,5 @@
-import type { TabGroupColor } from "@packages/ext-api";
-import { SessionTab } from "../Data/TabManager/Type/SessionTab";
+import type { TabGroupColor } from "../types/TabGroupColor";
+import type { SessionTab } from "../types/SessionTab";
 
 export type TabItem = {
   type: "tab";

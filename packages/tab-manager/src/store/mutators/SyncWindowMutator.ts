@@ -1,6 +1,6 @@
 import { AbstractMutator, Action } from "treeduxjs";
 import { TabManagerStore, TabManagerStoreInterface } from "../TabManagerStore";
-import { SessionWindow } from "../Type/SessionWindow";
+import type { SessionWindow } from "../../types/SessionWindow";
 
 export class SyncWindowMutator extends AbstractMutator<TabManagerStoreInterface> {
   public getType(): string {

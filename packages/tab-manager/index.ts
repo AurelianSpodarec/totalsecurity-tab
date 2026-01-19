@@ -1,15 +1,16 @@
-import { TabManagerFeature } from "./src/TabManagerFeature";
+export type { Session } from "./src/types/Session";
+export type { SessionTab } from "./src/types/SessionTab";
+export type { SessionWindow } from "./src/types/SessionWindow";
+export type { TabGroupColor } from "./src/types/TabGroupColor";
 
-export { TabManagerStore } from "./src/Data/TabManager/TabManagerStore";
-export { SessionTab } from "./src/Data/TabManager/Type/SessionTab";
-export { SessionWindow } from "./src/Data/TabManager/Type/SessionWindow";
-export { clampTabIndexForPinned, getPinnedTabCount } from "./src/tabs/pinning";
+export { TabManagerStore } from "./src/store/TabManagerStore";
+export type { TabManagerStoreInterface } from "./src/store/TabManagerStore";
+
 export {
   buildListItems,
   getItemKey,
   type TabListItem,
   type TabItem,
   type GroupTitleItem,
-} from "./src/logic/listItems";
-
-export const TabManager = new TabManagerFeature();
+} from "./src/utils/listItems";
+export { clampTabIndexForPinned, getPinnedTabCount } from "./src/utils/pinning";

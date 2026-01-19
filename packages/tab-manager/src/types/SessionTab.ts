@@ -1,4 +1,4 @@
-import { TabGroupColor } from "@packages/ext-api";
+import type { TabGroupColor } from "./TabGroupColor";
 
 export type SessionTab = {
   id: number;

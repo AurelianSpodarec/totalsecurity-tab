@@ -1,4 +1,4 @@
-import { SessionTab } from "./SessionTab";
+import type { SessionTab } from "./SessionTab";
 
 export type SessionWindow = {
   id: number;

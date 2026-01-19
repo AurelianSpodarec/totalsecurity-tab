@@ -3,7 +3,12 @@ import { Redux } from "@packages/state";
 import { SessionTab, SessionWindow } from "@packages/tab-manager";
 import { tryCatch } from "@packages/utility";
 
-export class TabManagerFeature {
+/**
+ * Chrome extension-specific bootstrap that syncs browser tabs with the TabManager store.
+ * This is the platform-specific orchestration layer - the tab-manager package itself
+ * remains platform-agnostic.
+ */
+export class TabManagerBootstrap {
   public bootstrap() {
     this.setupEventListeners();
     this.syncAllWindows().catch(console.error);
@@ -93,7 +98,6 @@ export class TabManagerFeature {
         !!changeInfo.favIconUrl ||
         !!changeInfo.title ||
         typeof changeInfo.pinned === "boolean" ||
-        // Some Chrome versions report groupId changes with groupId present but null-ish.
         Object.prototype.hasOwnProperty.call(changeInfo, "groupId");
 
       if (!hasRelevantChange) return;
@@ -138,4 +142,4 @@ export class TabManagerFeature {
   }
 }
 
-export const TabManager = new TabManagerFeature();
+export const TabManager = new TabManagerBootstrap();

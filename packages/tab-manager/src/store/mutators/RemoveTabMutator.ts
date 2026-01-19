@@ -6,10 +6,6 @@ type RemoveTabPayload = {
   tabId: number;
 };
 
-/**
- * Granular mutator to remove a single tab without fetching
- * the entire window state from the browser.
- */
 export class RemoveTabMutator extends AbstractMutator<TabManagerStoreInterface> {
   public getType(): string {
     return `${TabManagerStore.KEY}/remove_tab`;
@@ -38,12 +34,10 @@ export class RemoveTabMutator extends AbstractMutator<TabManagerStoreInterface> 
 
     window.tabs.splice(tabIndex, 1);
 
-    // Update indices for tabs after the removed one
     for (let i = tabIndex; i < window.tabs.length; i++) {
       window.tabs[i].index = i;
     }
 
-    // Remove the window if it has no tabs left
     if (window.tabs.length === 0) {
       delete state.session.windows[windowId];
     }

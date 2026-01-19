@@ -1,5 +1,5 @@
 import { buildListItems, getItemKey, TabListItem } from "./listItems";
-import { SessionTab } from "../Data/TabManager/Type/SessionTab";
+import type { SessionTab } from "../types/SessionTab";
 
 const createTab = (overrides: Partial<SessionTab> = {}): SessionTab => ({
   id: Math.floor(Math.random() * 10000),
@@ -60,13 +60,10 @@ describe("buildListItems", () => {
     const result = buildListItems(tabs);
 
     expect(result).toHaveLength(6);
-    // First group
     expect(result[0]).toEqual({ type: "group", groupId: 100, groupTitle: "Work", groupColor: "blue" });
     expect(result[1].type).toBe("tab");
     expect(result[2].type).toBe("tab");
-    // Ungrouped tab
     expect(result[3].type).toBe("tab");
-    // Second group
     expect(result[4]).toEqual({ type: "group", groupId: 200, groupTitle: "Personal", groupColor: "red" });
     expect(result[5].type).toBe("tab");
   });

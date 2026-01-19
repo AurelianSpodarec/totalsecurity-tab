@@ -1,4 +1,4 @@
-import { SessionWindow } from "./SessionWindow";
+import type { SessionWindow } from "./SessionWindow";
 
 export type Session = {
   windows: Record<number, SessionWindow>;
