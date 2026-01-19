@@ -113,6 +113,80 @@ function useTabMoveQueue(onError?: (err: unknown) => void) {
   return { requestMove, reset };
 }
 
+type GroupMoveRequest = {
+  groupId: number;
+  windowId: number;
+  index: number;
+  immediate?: boolean;
+};
+
+function useGroupMoveQueue(onError?: (err: unknown) => void) {
+  const throttleMs = 75;
+  const moveTimeout = useRef<number | null>(null);
+  const moveInFlight = useRef(false);
+  const moveGroupId = useRef<number | null>(null);
+  const moveWindowId = useRef<number | null>(null);
+  const pendingIndex = useRef<number | null>(null);
+  const lastCommittedIndex = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (moveTimeout.current) clearTimeout(moveTimeout.current);
+    };
+  }, []);
+
+  const flush = () => {
+    if (moveInFlight.current) return;
+    const groupId = moveGroupId.current;
+    const windowId = moveWindowId.current;
+    const index = pendingIndex.current;
+    if (!groupId || !windowId || index == null) return;
+
+    pendingIndex.current = null;
+    if (lastCommittedIndex.current === index) return;
+
+    moveInFlight.current = true;
+    TabGroupsApi.move(groupId, { index, windowId })
+      .then(() => { lastCommittedIndex.current = index; })
+      .catch((err) => { onError?.(err); })
+      .finally(() => {
+        moveInFlight.current = false;
+        if (pendingIndex.current != null) flush();
+      });
+  };
+
+  const reset = () => {
+    if (moveTimeout.current) clearTimeout(moveTimeout.current);
+    moveTimeout.current = null;
+    moveInFlight.current = false;
+    moveGroupId.current = null;
+    moveWindowId.current = null;
+    pendingIndex.current = null;
+    lastCommittedIndex.current = null;
+  };
+
+  const requestMove = ({ groupId, windowId, index, immediate }: GroupMoveRequest) => {
+    moveGroupId.current = groupId;
+    moveWindowId.current = windowId;
+    pendingIndex.current = index;
+
+    if (immediate) {
+      if (moveTimeout.current) clearTimeout(moveTimeout.current);
+      moveTimeout.current = null;
+      flush();
+      return;
+    }
+
+    if (moveTimeout.current) return;
+    moveTimeout.current = setTimeout(() => {
+      moveTimeout.current = null;
+      flush();
+    }, throttleMs) as unknown as number;
+  };
+
+  return { requestMove, reset };
+}
+
 export function useTabReorder({ window }: UseTabReorderArgs) {
   const [tabs, setTabs] = useState(window.tabs);
   const tabsRef = useRef<Array<SessionTab>>(tabs);
@@ -129,6 +203,14 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
     tabsRef.current = window.tabs;
     lastRequestedIndex.current = null;
   });
+
+  const groupMoveQueue = useGroupMoveQueue((err) => {
+    console.error(err);
+    setTabs(window.tabs);
+    tabsRef.current = window.tabs;
+  });
+
+  const lastRequestedGroupIndex = useRef<number | null>(null);
 
   useEffect(() => {
     tabsRef.current = tabs;
@@ -259,6 +341,20 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
       tabsRef.current = reordered;
       setTabs(reordered);
+
+      // Calculate target index for group and enqueue Chrome move
+      const firstTabIndex = reordered.findIndex((t) => t.groupId === gid);
+      if (firstTabIndex >= 0) {
+        const clampedIndex = Math.max(firstTabIndex, pinnedCount);
+        if (lastRequestedGroupIndex.current !== clampedIndex) {
+          lastRequestedGroupIndex.current = clampedIndex;
+          groupMoveQueue.requestMove({
+            groupId: gid,
+            windowId: window.id,
+            index: clampedIndex,
+          });
+        }
+      }
     }
   };
 
@@ -270,7 +366,9 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
       dragging.current = { type: "group", groupId: item.groupId };
     }
     lastRequestedIndex.current = null;
+    lastRequestedGroupIndex.current = null;
     moveQueue.reset();
+    groupMoveQueue.reset();
   };
 
   const handleDragEnd = () => {

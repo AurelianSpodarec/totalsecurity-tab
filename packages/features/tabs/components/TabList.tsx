@@ -98,13 +98,39 @@ export function TabList({
     });
   };
 
+  // Filter items for Reorder.Group - exclude tabs in collapsed groups
+  const visibleItems = useMemo(() => {
+    return items.filter((item) => {
+      if (item.type === "group") return true;
+      const groupId = item.tab.groupId;
+      if (groupId === -1) return true;
+      return !collapsedGroups.has(String(groupId));
+    });
+  }, [items, collapsedGroups]);
+
+  // When reordering visible items, reconstruct full item list with collapsed tabs
+  const handleVisibleReorder = (newVisibleItems: TabListItem[]) => {
+    const result: TabListItem[] = [];
+    for (const item of newVisibleItems) {
+      result.push(item);
+      // After a collapsed group header, insert its tabs
+      if (item.type === "group" && collapsedGroups.has(String(item.groupId))) {
+        const groupTabs = items.filter(
+          (i) => i.type === "tab" && i.tab.groupId === item.groupId
+        );
+        result.push(...groupTabs);
+      }
+    }
+    handleReorder(result);
+  };
+
   return (
     <div
       className={Html.joinClasses("p-3", "cursor-pointer", className)}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
-      <Reorder.Group values={items} onReorder={handleReorder} as="div">
+      <Reorder.Group values={visibleItems} onReorder={handleVisibleReorder} as="div">
         <div className="flex flex-col gap-3 grow overflow-y-auto">
           {groupedItems.map((groupedItem) => {
             if (groupedItem.type === "ungrouped") {
