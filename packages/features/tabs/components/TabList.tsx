@@ -1,9 +1,10 @@
 import { Html } from "@packages/utility";
-import { MouseEventHandler, useMemo, useState } from "react";
+import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SessionWindow, SessionTab } from "@packages/tab-manager";
 import { Reorder, AnimatePresence, motion } from "motion/react";
-import { TabGroupColor } from "@packages/ext-api";
+import { TabGroupColor, TabGroupsApi, TabGroupsUpdateInfo } from "@packages/ext-api";
 import { TabCard } from "./TabCard";
+import { GroupEditPopup } from "./GroupEditPopup";
 import { GroupTitleCard } from "./GroupTitleCard";
 import { useTabReorder, getItemKey, TabListItem } from "../hooks/useTabReorder";
 
@@ -83,8 +84,73 @@ export function TabList({
   } = useTabReorder({ window });
 
   const groupedItems = useMemo(() => buildGroupedItems(items), [items]);
-  
+
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+
+  const [editingGroup, setEditingGroup] = useState<
+    | {
+        groupId: number;
+        anchorRect: DOMRect;
+        draftTitle: string;
+        draftColor: TabGroupColor;
+      }
+    | null
+  >(null);
+
+  const titleDebounceRef = useRef<number | null>(null);
+  const lastSentTitleRef = useRef<string>("");
+  const lastSentColorRef = useRef<TabGroupColor>("grey");
+
+  const activeEditingGroup = useMemo(() => {
+    if (!editingGroup) return null;
+    const exists = groupedItems.some(
+      (it) => it.type === "grouped" && it.groupId === editingGroup.groupId
+    );
+    return exists ? editingGroup : null;
+  }, [editingGroup, groupedItems]);
+
+  // Debounced title sync while typing.
+  useEffect(() => {
+    if (!activeEditingGroup) return;
+
+    const { groupId, draftTitle } = activeEditingGroup;
+    if (draftTitle === lastSentTitleRef.current) return;
+
+    if (titleDebounceRef.current != null) {
+      globalThis.clearTimeout(titleDebounceRef.current);
+      titleDebounceRef.current = null;
+    }
+
+    titleDebounceRef.current = globalThis.setTimeout(() => {
+      const updates: TabGroupsUpdateInfo = { title: draftTitle };
+      TabGroupsApi.update(groupId, updates).catch(console.error);
+      lastSentTitleRef.current = draftTitle;
+      titleDebounceRef.current = null;
+    }, 200);
+
+    return () => {
+      if (titleDebounceRef.current != null) {
+        globalThis.clearTimeout(titleDebounceRef.current);
+        titleDebounceRef.current = null;
+      }
+    };
+  }, [activeEditingGroup]);
+
+  const closeEditingGroup = useCallback(() => {
+    if (titleDebounceRef.current != null) {
+      globalThis.clearTimeout(titleDebounceRef.current);
+      titleDebounceRef.current = null;
+    }
+
+    // Flush last title change (if any) so closing doesn't drop the final keystrokes.
+    if (editingGroup && editingGroup.draftTitle !== lastSentTitleRef.current) {
+      const updates: TabGroupsUpdateInfo = { title: editingGroup.draftTitle };
+      TabGroupsApi.update(editingGroup.groupId, updates).catch(console.error);
+      lastSentTitleRef.current = editingGroup.draftTitle;
+    }
+
+    setEditingGroup(null);
+  }, [editingGroup]);
 
   const toggleGroup = (groupId: string) => {
     setCollapsedGroups((prev) => {
@@ -130,6 +196,29 @@ export function TabList({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
+      {activeEditingGroup && (
+        <GroupEditPopup
+          key={activeEditingGroup.groupId}
+          groupId={activeEditingGroup.groupId}
+          title={activeEditingGroup.draftTitle}
+          color={activeEditingGroup.draftColor}
+          anchorRect={activeEditingGroup.anchorRect}
+          onClose={closeEditingGroup}
+          onTitleChange={(nextTitle) => {
+            setEditingGroup((prev) => (prev ? { ...prev, draftTitle: nextTitle } : prev));
+          }}
+          onColorChange={(nextColor) => {
+            setEditingGroup((prev) => (prev ? { ...prev, draftColor: nextColor } : prev));
+
+            if (!activeEditingGroup) return;
+            if (nextColor === lastSentColorRef.current) return;
+
+            const updates: TabGroupsUpdateInfo = { color: nextColor };
+            TabGroupsApi.update(activeEditingGroup.groupId, updates).catch(console.error);
+            lastSentColorRef.current = nextColor;
+          }}
+        />
+      )}
       <Reorder.Group values={visibleItems} onReorder={handleVisibleReorder} as="div">
         <div className="flex flex-col gap-3 grow overflow-y-auto">
           {groupedItems.map((groupedItem) => {
@@ -174,10 +263,30 @@ export function TabList({
                   onDragEnd={handleDragEnd}
                 >
                   <GroupTitleCard
-                    title={groupedItem.groupTitle}
-                    groupColor={groupedItem.groupColor}
+                    title={
+                      activeEditingGroup?.groupId === groupedItem.groupId
+                        ? activeEditingGroup.draftTitle
+                        : groupedItem.groupTitle
+                    }
+                    groupColor={
+                      activeEditingGroup?.groupId === groupedItem.groupId
+                        ? activeEditingGroup.draftColor
+                        : groupedItem.groupColor
+                    }
                     isExpanded={isExpanded}
                     onToggle={() => toggleGroup(groupIdStr)}
+                    onEdit={(anchorRect) => {
+                      const initialTitle = groupedItem.groupTitle ?? "";
+                      const initialColor = groupedItem.groupColor ?? "grey";
+                      lastSentTitleRef.current = initialTitle;
+                      lastSentColorRef.current = initialColor;
+                      setEditingGroup({
+                        groupId: groupedItem.groupId,
+                        anchorRect,
+                        draftTitle: initialTitle,
+                        draftColor: initialColor,
+                      });
+                    }}
                   />
                 </Reorder.Item>
 
@@ -205,7 +314,15 @@ export function TabList({
                             onDragEnd={handleDragEnd}
                           >
                             <TabCard
-                              tab={tab}
+                              tab={
+                                activeEditingGroup?.groupId === groupedItem.groupId
+                                  ? {
+                                      ...tab,
+                                      groupTitle: activeEditingGroup.draftTitle,
+                                      groupColor: activeEditingGroup.draftColor,
+                                    }
+                                  : tab
+                              }
                               onClick={() => handleTabClick(tab)}
                               onPin={() => handleTabPin(tab)}
                               onClose={() => handleTabClose(tab)}
