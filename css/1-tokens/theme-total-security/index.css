@@ -24,4 +24,32 @@
   --color-tab-group-purple: var(--color-chrome-tab-group-purple);
   --color-tab-group-cyan: var(--color-chrome-tab-group-cyan);
   --color-tab-group-orange: var(--color-chrome-tab-group-orange);
+
+  /* Group title chip variants (light bg + dark text) */
+  --color-tab-group-grey-bg: var(--color-chrome-tab-group-grey-bg);
+  --color-tab-group-grey-text: var(--color-chrome-tab-group-grey-text);
+
+  --color-tab-group-blue-bg: var(--color-chrome-tab-group-blue-bg);
+  --color-tab-group-blue-text: var(--color-chrome-tab-group-blue-text);
+
+  --color-tab-group-red-bg: var(--color-chrome-tab-group-red-bg);
+  --color-tab-group-red-text: var(--color-chrome-tab-group-red-text);
+
+  --color-tab-group-yellow-bg: var(--color-chrome-tab-group-yellow-bg);
+  --color-tab-group-yellow-text: var(--color-chrome-tab-group-yellow-text);
+
+  --color-tab-group-green-bg: var(--color-chrome-tab-group-green-bg);
+  --color-tab-group-green-text: var(--color-chrome-tab-group-green-text);
+
+  --color-tab-group-pink-bg: var(--color-chrome-tab-group-pink-bg);
+  --color-tab-group-pink-text: var(--color-chrome-tab-group-pink-text);
+
+  --color-tab-group-purple-bg: var(--color-chrome-tab-group-purple-bg);
+  --color-tab-group-purple-text: var(--color-chrome-tab-group-purple-text);
+
+  --color-tab-group-cyan-bg: var(--color-chrome-tab-group-cyan-bg);
+  --color-tab-group-cyan-text: var(--color-chrome-tab-group-cyan-text);
+
+  --color-tab-group-orange-bg: var(--color-chrome-tab-group-orange-bg);
+  --color-tab-group-orange-text: var(--color-chrome-tab-group-orange-text);
 }

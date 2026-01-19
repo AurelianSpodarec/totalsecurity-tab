@@ -32,11 +32,14 @@ export function GroupTitleCard({
         "inline-flex items-center gap-1 self-start",
         "rounded-full",
         "px-3 py-1",
-        "text-xs font-medium text-white",
+        "text-xs font-medium",
         "select-none cursor-pointer",
         className
       )}
-      style={{ backgroundColor: "var(--tab-group-color, #6b7280)" }}
+      style={{
+        backgroundColor: "var(--tab-group-bg, var(--tab-group-color, #6b7280))",
+        color: "var(--tab-group-text, #111827)",
+      }}
       title={resolvedTitle || "Untitled group"}
       onClick={onToggle}
     >
@@ -59,9 +62,8 @@ export function GroupTitleCard({
             "ml-1",
             "p-1",
             "rounded",
-            "opacity-0 group-hover:opacity-100",
-            "transition-opacity transition-colors",
-            "hover:bg-white/20"
+            "transition-colors",
+            "hover:bg-black/10"
           )}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
