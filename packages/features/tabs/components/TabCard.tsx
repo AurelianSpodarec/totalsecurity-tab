@@ -29,7 +29,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
   return (
     <div
       className={Html.joinClasses(
-        "flex items-center justify-between gap-3",
+        "relative flex items-center justify-between gap-3",
         active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
         "rounded",
         "p-3",
@@ -38,9 +38,15 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
         "cursor-pointer",
         className
       )}
-      style={groupBorderHex ? { borderLeft: `4px solid ${groupBorderHex}` } : undefined}
       onClick={onClick}
     >
+      {groupBorderHex && (
+        <span
+          className="absolute left-0 top-0 bottom-0 w-1 rounded-l"
+          style={{ backgroundColor: groupBorderHex }}
+        />
+      )}
+
       <span className="flex items-center gap-3 truncate">
         <Favicon url={faviconUrl} alt={`${title} favicon`} className="pointer-events-none" />
         <span className="truncate" title={title}>
