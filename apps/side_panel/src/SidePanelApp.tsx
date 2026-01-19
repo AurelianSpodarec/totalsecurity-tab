@@ -30,7 +30,7 @@ export function SidePanelApp() {
       <div
         className={Html.joinClasses(
           "flex flex-col gap-3",
-          "px-5"
+          "px-3"
         )}
       >
         <div className={Html.joinClasses("flex items-center justify-between", "gap-3")}>
