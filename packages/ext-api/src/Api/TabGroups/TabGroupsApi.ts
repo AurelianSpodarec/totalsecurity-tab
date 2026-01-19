@@ -2,6 +2,7 @@ import { AbstractApi } from "../../AbstractApi";
 import { Promises } from "../../Utility/Promises";
 import type {
   TabGroup,
+  TabGroupMoveProperties,
   TabGroupsUpdateInfo,
 } from "./types";
 
@@ -28,6 +29,14 @@ export class TabGroupsApi extends AbstractApi {
     return this.isMv2() && this.useChromeApi()
       ? Promises.wrap((callback) => this.getBrowserApi().tabGroups.update(groupId, updateProperties, callback))
       : this.getBrowserApi().tabGroups.update(groupId, updateProperties) as Promise<TabGroup>;
+  }
+
+  public static move(groupId: number, moveProperties: TabGroupMoveProperties): Promise<TabGroup> {
+    if (!this.isSupported()) return Promise.reject(new Error("tabGroups API not supported"));
+
+    return this.isMv2() && this.useChromeApi()
+      ? Promises.wrap((callback) => this.getBrowserApi().tabGroups.move(groupId, moveProperties, callback))
+      : (this.getBrowserApi().tabGroups.move(groupId, moveProperties) as Promise<TabGroup>);
   }
 
   public static onCreated(callback: (tabGroup: TabGroup) => void): () => void {

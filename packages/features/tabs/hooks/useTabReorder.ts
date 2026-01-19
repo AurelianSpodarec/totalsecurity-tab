@@ -1,6 +1,39 @@
-import { useEffect, useRef, useState } from "react";
-import { SessionTab, SessionWindow, clampTabIndexForPinned } from "@packages/tab-manager";
-import { TabsApi } from "@packages/ext-api";
+import { useMemo, useEffect, useRef, useState } from "react";
+import { SessionTab, SessionWindow, clampTabIndexForPinned, getPinnedTabCount } from "@packages/tab-manager";
+import { TabGroupsApi, TabsApi, TabGroupColor } from "@packages/ext-api";
+
+export type TabItem = {
+  type: "tab";
+  tab: SessionTab;
+};
+
+export type GroupTitleItem = {
+  type: "group";
+  groupId: number;
+  groupTitle?: string;
+  groupColor?: TabGroupColor;
+};
+
+export type TabListItem = TabItem | GroupTitleItem;
+
+export function buildListItems(tabs: SessionTab[]): TabListItem[] {
+  const result: TabListItem[] = [];
+  const seenGroups = new Set<number>();
+
+  for (const tab of tabs) {
+    const gid = tab.groupId;
+    if (gid !== -1 && !seenGroups.has(gid)) {
+      seenGroups.add(gid);
+      result.push({ type: "group", groupId: gid, groupTitle: tab.groupTitle, groupColor: tab.groupColor });
+    }
+    result.push({ type: "tab", tab });
+  }
+  return result;
+}
+
+export function getItemKey(item: TabListItem): string {
+  return item.type === "tab" ? `tab-${item.tab.id}` : `group-${item.groupId}`;
+}
 
 type UseTabReorderArgs = {
   window: SessionWindow;
@@ -84,8 +117,9 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   const [tabs, setTabs] = useState(window.tabs);
   const tabsRef = useRef<Array<SessionTab>>(tabs);
 
-  const isDragging = useRef(false);
-  const draggingTabId = useRef<number | null>(null);
+  type DraggingInfo = { type: "tab"; tabId: number } | { type: "group"; groupId: number } | null;
+  const dragging = useRef<DraggingInfo>(null);
+
   const lastRequestedIndex = useRef<number | null>(null);
   const originalDraggedTab = useRef<SessionTab | null>(null);
 
@@ -101,9 +135,15 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   }, [tabs]);
 
   useEffect(() => {
-    if (isDragging.current) return;
+    if (dragging.current) return;
     setTabs(window.tabs);
   }, [window.tabs]);
+
+  const items = useMemo(() => buildListItems(tabs), [tabs]);
+  const itemsRef = useRef<TabListItem[]>(items);
+  useEffect(() => {
+    itemsRef.current = items;
+  }, [items]);
 
   const enqueueChromeTabMove = (tabId: number, targetIndex: number, immediate = false) => {
     const clampedIndex = clampTabIndexForPinned(tabsRef.current, tabId, targetIndex);
@@ -122,94 +162,166 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
   const getOriginalTab = (id: number) => window.tabs.find((t) => t.id === id);
 
-  const computeGroupFromNeighbors = (nextTabs: SessionTab[], targetIndex: number) => {
-    const leftNeighbor = nextTabs[targetIndex - 1];
-    const rightNeighbor = nextTabs[targetIndex + 1];
-    const leftOriginal = leftNeighbor ? getOriginalTab(leftNeighbor.id) : undefined;
-    const rightOriginal = rightNeighbor ? getOriginalTab(rightNeighbor.id) : undefined;
-    const leftGroupId = leftOriginal?.groupId ?? -1;
-    const rightGroupId = rightOriginal?.groupId ?? -1;
+  const computeGroupFromItemNeighbors = (nextItems: TabListItem[], itemIndex: number): { groupId: number; groupColor?: TabGroupColor; groupTitle?: string } => {
+    const left = nextItems[itemIndex - 1];
+    const right = nextItems[itemIndex + 1];
+
+    if (left && left.type === "group") {
+      return { groupId: left.groupId, groupColor: left.groupColor, groupTitle: left.groupTitle };
+    }
+
+    const leftGroupId = left && left.type === "tab" ? (getOriginalTab(left.tab.id)?.groupId ?? -1) : -1;
+    const rightGroupId = right && right.type === "tab" ? (getOriginalTab(right.tab.id)?.groupId ?? -1) : -1;
 
     if (leftGroupId !== -1 && leftGroupId === rightGroupId) {
-      return { groupId: leftGroupId, groupColor: leftOriginal?.groupColor };
+      const leftOriginal = left && left.type === "tab" ? getOriginalTab(left.tab.id) : undefined;
+      return { groupId: leftGroupId, groupColor: leftOriginal?.groupColor, groupTitle: leftOriginal?.groupTitle };
     }
-    return { groupId: -1, groupColor: undefined };
+    return { groupId: -1, groupColor: undefined, groupTitle: undefined };
   };
 
-  const handleReorder = (nextTabs: Array<SessionTab>) => {
-    if (!isDragging.current) {
+  const handleReorder = (nextItems: TabListItem[]) => {
+    if (!dragging.current) {
+      const nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) => it.tab);
       tabsRef.current = nextTabs;
       setTabs(nextTabs);
       return;
     }
 
-    const tabId = draggingTabId.current;
-    if (!tabId) {
+    if (dragging.current.type === "tab") {
+      const tabId = dragging.current.tabId;
+      const idx = nextItems.findIndex((it) => it.type === "tab" && it.tab.id === tabId);
+      if (idx < 0) {
+        const nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) => it.tab);
+        tabsRef.current = nextTabs;
+        setTabs(nextTabs);
+        return;
+      }
+
+      const { groupId, groupColor, groupTitle } = computeGroupFromItemNeighbors(nextItems, idx);
+      const nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) =>
+        it.tab.id === tabId ? { ...it.tab, groupId, groupColor, groupTitle } : it.tab
+      );
+
       tabsRef.current = nextTabs;
       setTabs(nextTabs);
+
+      const tabIndex = nextTabs.findIndex((t) => t.id === tabId);
+      if (tabIndex >= 0) enqueueChromeTabMove(tabId, tabIndex);
       return;
     }
 
-    const nextIndex = nextTabs.findIndex((t) => t.id === tabId);
-    if (nextIndex < 0) {
-      tabsRef.current = nextTabs;
-      setTabs(nextTabs);
-      return;
+    if (dragging.current.type === "group") {
+      const gid = dragging.current.groupId;
+      const titleIdx = nextItems.findIndex((it) => it.type === "group" && it.groupId === gid);
+      if (titleIdx < 0) {
+        return;
+      }
+
+      const groupTitleItems = nextItems.filter((it): it is GroupTitleItem => it.type === "group");
+      const groupOrder = groupTitleItems.map((g) => g.groupId);
+
+      const groupedTabs = new Map<number, SessionTab[]>();
+      const ungroupedTabs: SessionTab[] = [];
+      for (const t of tabs) {
+        if (t.groupId !== -1) {
+          if (!groupedTabs.has(t.groupId)) groupedTabs.set(t.groupId, []);
+          groupedTabs.get(t.groupId)!.push(t);
+        } else {
+          ungroupedTabs.push(t);
+        }
+      }
+
+      const reordered: SessionTab[] = [];
+      const ungroupedIdx = 0;
+
+      for (let i = 0; i < nextItems.length; i++) {
+        const item = nextItems[i];
+        if (item.type === "group") {
+          const gTabs = groupedTabs.get(item.groupId) || [];
+          reordered.push(...gTabs);
+        } else if (item.type === "tab" && item.tab.groupId === -1) {
+          reordered.push(item.tab);
+        }
+      }
+
+      tabsRef.current = reordered;
+      setTabs(reordered);
     }
-
-    const { groupId, groupColor } = computeGroupFromNeighbors(nextTabs, nextIndex);
-    const updatedTabs = nextTabs.map((t) =>
-      t.id === tabId ? { ...t, groupId, groupColor } : t
-    );
-
-    tabsRef.current = updatedTabs;
-    setTabs(updatedTabs);
-    enqueueChromeTabMove(tabId, nextIndex);
   };
 
-  const handleDragStart = (tab: SessionTab) => {
-    isDragging.current = true;
-    draggingTabId.current = tab.id;
-    originalDraggedTab.current = tab;
+  const handleDragStart = (item: TabListItem) => {
+    if (item.type === "tab") {
+      dragging.current = { type: "tab", tabId: item.tab.id };
+      originalDraggedTab.current = item.tab;
+    } else {
+      dragging.current = { type: "group", groupId: item.groupId };
+    }
     lastRequestedIndex.current = null;
     moveQueue.reset();
   };
 
   const handleDragEnd = () => {
-    const tabId = draggingTabId.current;
-    isDragging.current = false;
-    draggingTabId.current = null;
+    const d = dragging.current;
+    dragging.current = null;
     originalDraggedTab.current = null;
 
-    if (!tabId) return;
+    if (!d) return;
 
-    const nextTabs = tabsRef.current;
-    const nextIndex = nextTabs.findIndex((t) => t.id === tabId);
-    if (nextIndex < 0) return;
+    if (d.type === "tab") {
+      const tabId = d.tabId;
+      const nextTabs = tabsRef.current;
+      const nextIndex = nextTabs.findIndex((t) => t.id === tabId);
+      if (nextIndex < 0) return;
 
-    enqueueChromeTabMove(tabId, nextIndex, true);
+      enqueueChromeTabMove(tabId, nextIndex, true);
 
-    const originalMovedTab = getOriginalTab(tabId);
-    const { groupId: desiredGroupId, groupColor: desiredGroupColor } = computeGroupFromNeighbors(nextTabs, nextIndex);
-    const originalGroupId = originalMovedTab?.groupId ?? -1;
+      const originalMovedTab = getOriginalTab(tabId);
+      const itms = itemsRef.current;
+      const itemIdx = itms.findIndex((it) => it.type === "tab" && it.tab.id === tabId);
+      const { groupId: desiredGroupId, groupColor: desiredGroupColor, groupTitle: desiredGroupTitle } = computeGroupFromItemNeighbors(itms, itemIdx);
+      const originalGroupId = originalMovedTab?.groupId ?? -1;
 
-    if (desiredGroupId !== originalGroupId) {
-      const updatedTabs = nextTabs.map((t) =>
-        t.id === tabId ? { ...t, groupId: desiredGroupId, groupColor: desiredGroupColor } : t
-      );
-      tabsRef.current = updatedTabs;
-      setTabs(updatedTabs);
+      if (desiredGroupId !== originalGroupId) {
+        const updatedTabs = nextTabs.map((t) =>
+          t.id === tabId ? { ...t, groupId: desiredGroupId, groupColor: desiredGroupColor, groupTitle: desiredGroupTitle } : t
+        );
+        tabsRef.current = updatedTabs;
+        setTabs(updatedTabs);
 
-      if (desiredGroupId === -1) {
-        TabsApi.ungroup(tabId).catch(console.error);
-      } else {
-        TabsApi.group(tabId, desiredGroupId).catch(console.error);
+        if (desiredGroupId === -1) {
+          TabsApi.ungroup(tabId).catch(console.error);
+        } else {
+          TabsApi.group(tabId, desiredGroupId).catch(console.error);
+        }
       }
+      return;
+    }
+
+    if (d.type === "group") {
+      const gid = d.groupId;
+      const nextTabs = tabsRef.current;
+      const pinnedCount = getPinnedTabCount(nextTabs);
+      const groupTabs = nextTabs.filter((t) => t.groupId === gid);
+      if (groupTabs.length === 0) return;
+
+      const firstTabIndex = nextTabs.findIndex((t) => t.groupId === gid);
+      if (firstTabIndex < 0) return;
+
+      const clampedIndex = Math.max(firstTabIndex, pinnedCount);
+
+      TabGroupsApi.move(gid, { windowId: window.id, index: clampedIndex }).catch((err) => {
+        console.error("tabGroups.move not supported or failed, falling back to tab moves", err);
+        const sortedTabIds = groupTabs.map((t) => t.id);
+        sortedTabIds.forEach((tid, i) => {
+          TabsApi.move(tid, { index: clampedIndex + i, windowId: window.id }).catch(console.error);
+        });
+      });
     }
   };
 
   const handleTabClick = (tab: SessionTab) => {
-    if (isDragging.current) return;
+    if (dragging.current) return;
     return TabsApi.update(tab.id, { active: true });
   };
 
@@ -222,7 +334,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   };
 
   return {
-    tabs,
+    items,
     handleReorder,
     handleDragStart,
     handleDragEnd,

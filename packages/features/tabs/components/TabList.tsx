@@ -3,7 +3,8 @@ import { MouseEventHandler } from "react";
 import { SessionWindow } from "@packages/tab-manager";
 import { Reorder } from "motion/react";
 import { TabCard } from "./TabCard";
-import { useTabReorder } from "../hooks/useTabReorder";
+import { GroupTitleCard } from "./GroupTitleCard";
+import { useTabReorder, getItemKey } from "../hooks/useTabReorder";
 
 type TabListProps = {
   className?: string;
@@ -19,7 +20,7 @@ export function TabList({
   className,
 }: TabListProps) {
   const {
-    tabs,
+    items,
     handleReorder,
     handleDragStart,
     handleDragEnd,
@@ -34,22 +35,29 @@ export function TabList({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >
-      <Reorder.Group values={tabs} onReorder={handleReorder} as="div">
+      <Reorder.Group values={items} onReorder={handleReorder} as="div">
         <ul className="flex flex-col gap-3 grow overflow-y-auto">
-          {tabs.map((tab) => (
+          {items.map((item) => (
             <Reorder.Item
-              key={tab.id}
-              value={tab}
+              key={getItemKey(item)}
+              value={item}
               as="li"
-              onDragStart={() => handleDragStart(tab)}
+              onDragStart={() => handleDragStart(item)}
               onDragEnd={handleDragEnd}
             >
-              <TabCard
-                tab={tab}
-                onClick={() => handleTabClick(tab)}
-                onPin={() => handleTabPin(tab)}
-                onClose={() => handleTabClose(tab)}
-              />
+              {item.type === "tab" ? (
+                <TabCard
+                  tab={item.tab}
+                  onClick={() => handleTabClick(item.tab)}
+                  onPin={() => handleTabPin(item.tab)}
+                  onClose={() => handleTabClose(item.tab)}
+                />
+              ) : (
+                <GroupTitleCard
+                  title={item.groupTitle}
+                  groupColor={item.groupColor}
+                />
+              )}
             </Reorder.Item>
           ))}
         </ul>
