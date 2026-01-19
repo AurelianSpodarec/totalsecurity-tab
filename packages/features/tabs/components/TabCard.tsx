@@ -29,7 +29,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
     <div
       data-tab-group-color={groupColor}
       className={Html.joinClasses(
-        "relative flex items-center justify-between gap-3",
+        "group relative flex items-center justify-between gap-3",
         active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
         "rounded",
         "p-3",
@@ -55,12 +55,27 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
       </span>
 
       {(onPin || onClose) && (
-        <TabActions
-          pinned={pinned}
-          active={active}
-          onPin={handlePin}
-          onClose={handleClose}
-        />
+        <span
+          className={Html.joinClasses(
+            "flex",
+            "transition-opacity duration-150",
+            pinned
+              ? "opacity-100 pointer-events-auto"
+              : Html.joinClasses(
+                  // Keep layout stable but only reveal actions when the card is interacted with.
+                  "opacity-0 pointer-events-none",
+                  "group-hover:opacity-100 group-hover:pointer-events-auto",
+                  "group-focus-within:opacity-100 group-focus-within:pointer-events-auto"
+                )
+          )}
+        >
+          <TabActions
+            pinned={pinned}
+            active={active}
+            onPin={handlePin}
+            onClose={handleClose}
+          />
+        </span>
       )}
     </div>
   );
