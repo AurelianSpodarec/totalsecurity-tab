@@ -2,6 +2,8 @@ import { Html } from "@packages/utility";
 import { TabList, SelectWindow } from "@packages/features";
 import { WindowsApi } from "@packages/ext-api";
 import { useWindows } from "@packages/hooks";
+import { useState } from "react";
+import { SettingsModal } from "./SettingsModal";
 
 export function SidePanelApp() {
   const {
@@ -12,6 +14,8 @@ export function SidePanelApp() {
     setSelectedWindowId,
   } = useWindows();
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <div
       className={Html.joinClasses(
@@ -21,20 +25,40 @@ export function SidePanelApp() {
         "pt-5"
       )}
     >
+      <SettingsModal open={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
       <div
         className={Html.joinClasses(
           "flex flex-col gap-3",
           "px-5"
         )}
       >
-        <h1
-          className={Html.joinClasses(
-            "text-2xl font-semibold",
-            "text-gray-900 dark:text-white"
-          )}
-        >
-          Total Tabs
-        </h1>
+        <div className={Html.joinClasses("flex items-center justify-between", "gap-3")}>
+          <h1
+            className={Html.joinClasses(
+              "text-2xl font-semibold",
+              "text-gray-900 dark:text-white"
+            )}
+          >
+            Total Tabs
+          </h1>
+
+          <button
+            type="button"
+            className={Html.joinClasses(
+              "rounded",
+              "px-3 py-2",
+              "text-sm font-medium",
+              "bg-gray-200 dark:bg-gray-700",
+              "text-gray-900 dark:text-white",
+              "hover:bg-gray-300 dark:hover:bg-gray-600",
+              "transition-colors"
+            )}
+            onClick={() => setIsSettingsOpen(true)}
+          >
+            Settings
+          </button>
+        </div>
         <SelectWindow
           windows={windows}
           currentWindowId={currentWindowId}
