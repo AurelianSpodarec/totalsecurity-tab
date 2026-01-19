@@ -1,6 +1,6 @@
-import { Html } from "@packages/utility";
 import { MouseEventHandler } from "react";
-import { SessionTab, tabGroupColorToHex } from "@packages/tab-manager";
+import { Html } from "@packages/utility";
+import { SessionTab } from "@packages/tab-manager";
 import { Favicon } from "@packages/components";
 import { TabActions } from "./TabActions";
 
@@ -14,7 +14,6 @@ type TabCardProps = {
 
 export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProps) {
   const { faviconUrl, title, pinned, active, groupColor } = tab;
-  const groupBorderHex = tabGroupColorToHex(groupColor);
 
   const handlePin: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
@@ -28,6 +27,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
 
   return (
     <div
+      data-tab-group-color={groupColor}
       className={Html.joinClasses(
         "relative flex items-center justify-between gap-3",
         active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
@@ -40,10 +40,10 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
       )}
       onClick={onClick}
     >
-      {groupBorderHex && (
+      {groupColor && (
         <span
           className="absolute left-0 top-0 bottom-0 w-1 rounded-l"
-          style={{ backgroundColor: groupBorderHex }}
+          style={{ backgroundColor: "var(--tab-group-color)" }}
         />
       )}
 

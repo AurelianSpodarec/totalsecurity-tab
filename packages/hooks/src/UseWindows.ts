@@ -12,6 +12,16 @@ export function useWindows() {
       setCurrentWindowId(win.id!);
       setSelectedWindowId(String(win.id!));
     });
+
+    const handleFocusChange = (windowId: number) => {
+      setCurrentWindowId(windowId);
+    };
+
+    WindowsApi.onFocusChanged(handleFocusChange);
+
+    return () => {
+      WindowsApi.offFocusChanged(handleFocusChange);
+    };
   }, []);
 
   const selectedWindow = selectedWindowId

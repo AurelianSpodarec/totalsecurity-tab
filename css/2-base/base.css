@@ -2,5 +2,19 @@
  * # Base
  * ============================================================================ */
 @layer base {
-
+  /*
+   * Tab group colors
+   *
+   * We map Chrome's groupColor values ("blue", "red", ...) to theme tokens.
+   * Components can then use var(--tab-group-color) without hardcoding colors in TS.
+   */
+  [data-tab-group-color="grey"] { --tab-group-color: var(--color-tab-group-grey); }
+  [data-tab-group-color="blue"] { --tab-group-color: var(--color-tab-group-blue); }
+  [data-tab-group-color="red"] { --tab-group-color: var(--color-tab-group-red); }
+  [data-tab-group-color="yellow"] { --tab-group-color: var(--color-tab-group-yellow); }
+  [data-tab-group-color="green"] { --tab-group-color: var(--color-tab-group-green); }
+  [data-tab-group-color="pink"] { --tab-group-color: var(--color-tab-group-pink); }
+  [data-tab-group-color="purple"] { --tab-group-color: var(--color-tab-group-purple); }
+  [data-tab-group-color="cyan"] { --tab-group-color: var(--color-tab-group-cyan); }
+  [data-tab-group-color="orange"] { --tab-group-color: var(--color-tab-group-orange); }
 }

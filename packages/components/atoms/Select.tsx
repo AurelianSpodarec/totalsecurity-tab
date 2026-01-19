@@ -11,6 +11,7 @@ type SelectProps = {
   value: string;
   onChange: (value: string) => void;
   options: Array<SelectOption>;
+  displayValue?: string;
   placeholder?: string;
   className?: string;
 };
@@ -19,6 +20,7 @@ export function Select({
   value,
   onChange,
   options,
+  displayValue,
   placeholder = "Select...",
   className,
 }: SelectProps) {
@@ -39,7 +41,11 @@ export function Select({
           className
         )}
       >
-        <SelectPrimitive.Value placeholder={placeholder} />
+        {displayValue ? (
+          <span>{displayValue}</span>
+        ) : (
+          <SelectPrimitive.Value placeholder={placeholder} />
+        )}
         <SelectPrimitive.Icon>
           <ChevronDownIcon />
         </SelectPrimitive.Icon>
@@ -86,7 +92,7 @@ export function Select({
               >
                 <SelectPrimitive.ItemText>{option.label}</SelectPrimitive.ItemText>
                 <SelectPrimitive.ItemIndicator className="ml-auto">
-                  <CheckIcon />
+                  (current)
                 </SelectPrimitive.ItemIndicator>
               </SelectPrimitive.Item>
             ))}

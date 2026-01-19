@@ -53,4 +53,12 @@ export class WindowsApi extends AbstractApi {
       browserApi.windows.onRemoved.removeListener(callback);
     };
   }
+
+  public static onFocusChanged(callback: (windowId: number) => void): void {
+    this.getBrowserApi().windows.onFocusChanged.addListener(callback);
+  }
+
+  public static offFocusChanged(callback: (windowId: number) => void): void {
+    this.getBrowserApi().windows.onFocusChanged.removeListener(callback);
+  }
 }

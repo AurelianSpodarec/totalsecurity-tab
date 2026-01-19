@@ -1,0 +1,18 @@
+/* ============================================================================
+ * # Primitives: Chrome tab group colors
+ *
+ * Source-of-truth palette keyed by Chrome's TabGroupColor values.
+ * Themes may alias/override these.
+ * ============================================================================ */
+
+@theme {
+  --color-chrome-tab-group-grey: #9ca3af;
+  --color-chrome-tab-group-blue: #3b82f6;
+  --color-chrome-tab-group-red: #ef4444;
+  --color-chrome-tab-group-yellow: #eab308;
+  --color-chrome-tab-group-green: #22c55e;
+  --color-chrome-tab-group-pink: #ec4899;
+  --color-chrome-tab-group-purple: #a855f7;
+  --color-chrome-tab-group-cyan: #06b6d4;
+  --color-chrome-tab-group-orange: #f97316;
+}
