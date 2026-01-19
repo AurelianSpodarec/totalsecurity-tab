@@ -190,24 +190,40 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
     if (dragging.current.type === "tab") {
       const tabId = dragging.current.tabId;
-      const idx = nextItems.findIndex((it) => it.type === "tab" && it.tab.id === tabId);
-      if (idx < 0) {
-        const nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) => it.tab);
+      const draggedTab = originalDraggedTab.current;
+      if (!draggedTab) return;
+
+      let nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) => it.tab);
+      const draggedIdx = nextTabs.findIndex((t) => t.id === tabId);
+      if (draggedIdx < 0) {
         tabsRef.current = nextTabs;
         setTabs(nextTabs);
         return;
       }
 
-      const { groupId, groupColor, groupTitle } = computeGroupFromItemNeighbors(nextItems, idx);
-      const nextTabs = nextItems.filter((it): it is TabItem => it.type === "tab").map((it) =>
-        it.tab.id === tabId ? { ...it.tab, groupId, groupColor, groupTitle } : it.tab
+      const pinnedCount = getPinnedTabCount(tabsRef.current);
+      const isPinned = draggedTab.pinned;
+
+      if (isPinned && draggedIdx >= pinnedCount) {
+        const removed = nextTabs.splice(draggedIdx, 1)[0];
+        const clampedIdx = Math.max(0, pinnedCount - 1);
+        nextTabs.splice(clampedIdx, 0, removed);
+      } else if (!isPinned && draggedIdx < pinnedCount) {
+        const removed = nextTabs.splice(draggedIdx, 1)[0];
+        nextTabs.splice(pinnedCount, 0, removed);
+      }
+
+      const finalIdx = nextTabs.findIndex((t) => t.id === tabId);
+      const itemIdx = nextItems.findIndex((it) => it.type === "tab" && it.tab.id === tabId);
+      const { groupId, groupColor, groupTitle } = computeGroupFromItemNeighbors(nextItems, itemIdx >= 0 ? itemIdx : finalIdx);
+      nextTabs = nextTabs.map((t) =>
+        t.id === tabId ? { ...t, groupId, groupColor, groupTitle } : t
       );
 
       tabsRef.current = nextTabs;
       setTabs(nextTabs);
 
-      const tabIndex = nextTabs.findIndex((t) => t.id === tabId);
-      if (tabIndex >= 0) enqueueChromeTabMove(tabId, tabIndex);
+      if (finalIdx >= 0) enqueueChromeTabMove(tabId, finalIdx);
       return;
     }
 
@@ -218,29 +234,25 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
         return;
       }
 
-      const groupTitleItems = nextItems.filter((it): it is GroupTitleItem => it.type === "group");
-      const groupOrder = groupTitleItems.map((g) => g.groupId);
+      const pinnedCount = getPinnedTabCount(tabs);
 
       const groupedTabs = new Map<number, SessionTab[]>();
-      const ungroupedTabs: SessionTab[] = [];
       for (const t of tabs) {
         if (t.groupId !== -1) {
           if (!groupedTabs.has(t.groupId)) groupedTabs.set(t.groupId, []);
           groupedTabs.get(t.groupId)!.push(t);
-        } else {
-          ungroupedTabs.push(t);
         }
       }
 
-      const reordered: SessionTab[] = [];
-      const ungroupedIdx = 0;
+      const pinnedTabs = tabs.filter((t) => t.pinned);
+      const reordered: SessionTab[] = [...pinnedTabs];
 
       for (let i = 0; i < nextItems.length; i++) {
         const item = nextItems[i];
         if (item.type === "group") {
           const gTabs = groupedTabs.get(item.groupId) || [];
           reordered.push(...gTabs);
-        } else if (item.type === "tab" && item.tab.groupId === -1) {
+        } else if (item.type === "tab" && item.tab.groupId === -1 && !item.tab.pinned) {
           reordered.push(item.tab);
         }
       }
