@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { TabGroupColor, TabGroupsApi, TabGroupsUpdateInfo } from "@packages/ext-api";
+import { TabGroupsApi, type TabGroupsUpdateInfo } from "@packages/ext-api";
+import type { TabGroupColor } from "@packages/tab-manager";
 import type { TabListItem } from "./useTabReorder";
 
 export type EditingTabGroup = {

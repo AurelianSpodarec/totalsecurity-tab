@@ -1,22 +1,10 @@
-import { Html } from "@packages/utility";
-import type { TabGroupColor } from "@packages/ext-api";
 import { useEffect, useRef } from "react";
+import { Html } from "@packages/utility";
+import { TAB_GROUP_COLORS, type TabGroupColor } from "@packages/tab-manager";
 import { useShortcut } from "@packages/keyboard";
 import { usePopupPosition } from "../../hooks/usePopupPosition";
 import { ColorPicker } from "./ColorPicker";
 import { PopupOverlay } from "./PopupOverlay";
-
-const TAB_GROUP_COLORS: TabGroupColor[] = [
-  "grey",
-  "blue",
-  "red",
-  "yellow",
-  "green",
-  "pink",
-  "purple",
-  "cyan",
-  "orange",
-];
 
 type TabGroupEditPopupProps = {
   groupId: number;

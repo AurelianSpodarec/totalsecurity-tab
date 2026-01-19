@@ -39,7 +39,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   return (
     <div
-      className={Html.joinClasses("fixed inset-0 z-50", "h-full w-full")}
+      className={Html.joinClasses("fixed inset-0 z-50", "h-[90%] w-[90%]")}
       onClick={onClose}
     >
       <div className="absolute inset-0 bg-black/50" />

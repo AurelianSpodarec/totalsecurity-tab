@@ -1,8 +1,8 @@
-import { Pencil1Icon } from "@radix-ui/react-icons";
-import { Html } from "@packages/utility";
-import { TabGroupColor } from "@packages/ext-api";
 import { useRef } from "react";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 import { Button } from "@packages/components";
+import { Html } from "@packages/utility";
+import type { TabGroupColor } from "@packages/tab-manager";
 
 type TabGroupHeaderProps = {
   title?: string;
@@ -13,14 +13,7 @@ type TabGroupHeaderProps = {
   className?: string;
 };
 
-export function TabGroupHeader({
-  title,
-  groupColor,
-  isExpanded = true,
-  onToggle,
-  onEdit,
-  className,
-}: TabGroupHeaderProps) {
+export function TabGroupHeader({ title, groupColor, isExpanded = true, onToggle, onEdit, className }: TabGroupHeaderProps) {
   const resolvedTitle = title?.trim() ? title : "";
   const rootRef = useRef<HTMLDivElement>(null);
 

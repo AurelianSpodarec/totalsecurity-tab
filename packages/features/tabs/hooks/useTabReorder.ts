@@ -10,7 +10,8 @@ import {
   TabItem,
   GroupTitleItem,
 } from "@packages/tab-manager";
-import { TabGroupsApi, TabsApi, TabGroupColor } from "@packages/ext-api";
+import { TabGroupsApi, TabsApi } from "@packages/ext-api";
+import type { TabGroupColor } from "@packages/tab-manager";
 import { useMoveQueue } from "./useMoveQueue";
 
 export { buildListItems, getItemKey };
