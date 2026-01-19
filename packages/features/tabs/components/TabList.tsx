@@ -1,7 +1,7 @@
 import { Html } from "@packages/utility";
 import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SessionWindow } from "@packages/tab-manager";
-import { Reorder } from "motion/react";
+import { AnimatePresence, Reorder } from "motion/react";
 import { TabGroupColor, TabGroupsApi, TabGroupsUpdateInfo } from "@packages/ext-api";
 import { TabCard } from "./TabCard";
 import { GroupEditPopup } from "./GroupEditPopup";
@@ -211,80 +211,100 @@ export function TabList({
         />
       )}
       <Reorder.Group values={reorderKeys} onReorder={handleVisibleReorder} as="div">
-        <div className="flex flex-col gap-3 grow overflow-y-auto">
-          {reorderKeys.map((key) => {
-            const item = itemsByKey.get(key);
-            if (!item) return null;
+        <div className="flex flex-col overflow-x-hidden">
+          <AnimatePresence initial={false}>
+            {reorderKeys.map((key, idx) => {
+              const item = itemsByKey.get(key);
+              if (!item) return null;
 
-            if (item.type === "group") {
-              const groupIdStr = String(item.groupId);
-              const isExpanded = !collapsedGroups.has(groupIdStr);
+              // Replace `gap-3` with a per-item margin. This keeps spacing consistent,
+              // and (critically) lets exiting items animate their spacing to 0 so we don't
+              // temporarily overflow the scroll container and flash an extra scrollbar.
+              const isLast = idx === reorderKeys.length - 1;
+              const itemSpacing = isLast ? 0 : 12;
+
+              if (item.type === "group") {
+                const groupIdStr = String(item.groupId);
+                const isExpanded = !collapsedGroups.has(groupIdStr);
+
+                return (
+                  <Reorder.Item
+                    key={key}
+                    value={key}
+                    as="div"
+                    style={{ marginBottom: itemSpacing }}
+                    onDragStart={() => handleItemDragStart(item)}
+                    onDragEnd={() => handleItemDragEnd()}
+                  >
+                    <GroupTitleCard
+                      title={
+                        activeEditingGroup?.groupId === item.groupId
+                          ? activeEditingGroup.draftTitle
+                          : item.groupTitle
+                      }
+                      groupColor={
+                        activeEditingGroup?.groupId === item.groupId
+                          ? activeEditingGroup.draftColor
+                          : item.groupColor
+                      }
+                      isExpanded={isExpanded}
+                      onToggle={() => toggleGroup(groupIdStr)}
+                      onEdit={(anchorRect) => {
+                        const initialTitle = item.groupTitle ?? "";
+                        const initialColor = item.groupColor ?? "grey";
+                        lastSentTitleRef.current = initialTitle;
+                        lastSentColorRef.current = initialColor;
+                        setEditingGroup({
+                          groupId: item.groupId,
+                          anchorRect,
+                          draftTitle: initialTitle,
+                          draftColor: initialColor,
+                        });
+                      }}
+                    />
+                  </Reorder.Item>
+                );
+              }
+
+              const tab = item.tab;
+              const displayTab =
+                activeEditingGroup?.groupId === tab.groupId
+                  ? {
+                      ...tab,
+                      groupTitle: activeEditingGroup.draftTitle,
+                      groupColor: activeEditingGroup.draftColor,
+                    }
+                  : tab;
 
               return (
                 <Reorder.Item
                   key={key}
                   value={key}
                   as="div"
+                  style={{ overflow: "hidden", willChange: "height, opacity", marginBottom: itemSpacing }}
+                  initial={{ height: 0, opacity: 0, marginBottom: 0 }}
+                  animate={{ height: "auto", opacity: 1, marginBottom: itemSpacing }}
+                  exit={{ height: 0, opacity: 0, marginBottom: 0 }}
+                  transition={{
+                    type: "tween",
+                    ease: "easeInOut",
+                    height: { duration: 0.12 },
+                    opacity: { duration: 0.08 },
+                    marginBottom: { duration: 0.08 },
+                  }}
                   onDragStart={() => handleItemDragStart(item)}
                   onDragEnd={() => handleItemDragEnd()}
                 >
-                  <GroupTitleCard
-                    title={
-                      activeEditingGroup?.groupId === item.groupId
-                        ? activeEditingGroup.draftTitle
-                        : item.groupTitle
-                    }
-                    groupColor={
-                      activeEditingGroup?.groupId === item.groupId
-                        ? activeEditingGroup.draftColor
-                        : item.groupColor
-                    }
-                    isExpanded={isExpanded}
-                    onToggle={() => toggleGroup(groupIdStr)}
-                    onEdit={(anchorRect) => {
-                      const initialTitle = item.groupTitle ?? "";
-                      const initialColor = item.groupColor ?? "grey";
-                      lastSentTitleRef.current = initialTitle;
-                      lastSentColorRef.current = initialColor;
-                      setEditingGroup({
-                        groupId: item.groupId,
-                        anchorRect,
-                        draftTitle: initialTitle,
-                        draftColor: initialColor,
-                      });
-                    }}
+                  <TabCard
+                    tab={displayTab}
+                    onClick={() => handleTabClick(tab)}
+                    onPin={() => handleTabPin(tab)}
+                    onClose={() => handleTabClose(tab)}
                   />
                 </Reorder.Item>
               );
-            }
-
-            const tab = item.tab;
-            const displayTab =
-              activeEditingGroup?.groupId === tab.groupId
-                ? {
-                    ...tab,
-                    groupTitle: activeEditingGroup.draftTitle,
-                    groupColor: activeEditingGroup.draftColor,
-                  }
-                : tab;
-
-            return (
-              <Reorder.Item
-                key={key}
-                value={key}
-                as="div"
-                onDragStart={() => handleItemDragStart(item)}
-                onDragEnd={() => handleItemDragEnd()}
-              >
-                <TabCard
-                  tab={displayTab}
-                  onClick={() => handleTabClick(tab)}
-                  onPin={() => handleTabPin(tab)}
-                  onClose={() => handleTabClose(tab)}
-                />
-              </Reorder.Item>
-            );
-          })}
+            })}
+          </AnimatePresence>
         </div>
       </Reorder.Group>
     </div>

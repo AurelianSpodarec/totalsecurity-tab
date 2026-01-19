@@ -63,7 +63,7 @@ export function SidePanelApp() {
       <div
         className={Html.joinClasses(
           "grow flex flex-col gap-5 h-full w-full",
-          "overflow-y-auto"
+          "overflow-y-auto overflow-x-hidden"
         )}
       >
         {selectedWindow ? (
