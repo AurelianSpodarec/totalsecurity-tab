@@ -1,15 +1,17 @@
 import { AbstractApi } from "../../AbstractApi";
-import { Window } from "./Window";
 import { Promises } from "../../Utility/Promises";
-import { WindowQueryOptions } from "./WindowQueryOptions";
-import { WindowCreateInfo } from "./WindowCreateInfo";
-import { WindowUpdateInfo } from "./WindowUpdateInfo";
+import type {
+  Window,
+  WindowQueryOptions,
+  WindowCreateInfo,
+  WindowUpdateInfo,
+} from "./types";
 
 export class WindowsApi extends AbstractApi {
   public static create(createInfo: WindowCreateInfo): Promise<Window> {
     return this.isMv2() && this.useChromeApi()
       ? Promises.wrap((callback) => this.getBrowserApi().windows.create(createInfo, callback))
-      : this.getBrowserApi().windows.create(createInfo);
+      : this.getBrowserApi().windows.create(createInfo) as Promise<Window>;
   }
 
   public static update(windowId: number, updateInfo: WindowUpdateInfo): Promise<Window> {
@@ -38,27 +40,27 @@ export class WindowsApi extends AbstractApi {
 
   public static onCreated(callback: (window: Window) => void): () => void {
     const browserApi = this.getBrowserApi();
-    browserApi.windows.onCreated.addListener(callback);
+    (browserApi.windows.onCreated as any).addListener(callback);
 
     return () => {
-      browserApi.windows.onCreated.removeListener(callback);
+      (browserApi.windows.onCreated as any).removeListener(callback);
     };
   }
 
   public static onRemoved(callback: (windowId: number) => void): () => void {
     const browserApi = this.getBrowserApi();
-    browserApi.windows.onRemoved.addListener(callback);
+    (browserApi.windows.onRemoved as any).addListener(callback);
 
     return () => {
-      browserApi.windows.onRemoved.removeListener(callback);
+      (browserApi.windows.onRemoved as any).removeListener(callback);
     };
   }
 
   public static onFocusChanged(callback: (windowId: number) => void): void {
-    this.getBrowserApi().windows.onFocusChanged.addListener(callback);
+    (this.getBrowserApi().windows.onFocusChanged as any).addListener(callback);
   }
 
   public static offFocusChanged(callback: (windowId: number) => void): void {
-    this.getBrowserApi().windows.onFocusChanged.removeListener(callback);
+    (this.getBrowserApi().windows.onFocusChanged as any).removeListener(callback);
   }
 }

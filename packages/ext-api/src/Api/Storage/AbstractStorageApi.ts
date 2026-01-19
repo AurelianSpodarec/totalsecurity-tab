@@ -1,6 +1,6 @@
 import { AbstractApi } from "../../AbstractApi";
-import { StorageChange } from "./StorageChange";
 import { Promises } from "../../Utility/Promises";
+import type { StorageChange } from "./types";
 
 export class AbstractStorageApi extends AbstractApi {
   protected static storageType: "local" | "session" = "local";
@@ -55,10 +55,11 @@ export class AbstractStorageApi extends AbstractApi {
 
         if (!hasRelevantChanges) return;
 
-        return callback(relevantChanges);
+        callback(relevantChanges);
+        return;
       }
 
-      return callback(changes);
+      callback(changes);
     };
 
     browserApi.storage.onChanged.addListener(listener);

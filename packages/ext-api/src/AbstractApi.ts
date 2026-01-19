@@ -1,10 +1,9 @@
-declare const chrome: any;
-declare const browser: any;
+declare const browser: typeof chrome | undefined;
 
 export class AbstractApi {
-  protected static getBrowserApi(): any {
+  protected static getBrowserApi(): typeof chrome {
     if (typeof browser !== "undefined") {
-      return browser;
+      return browser as typeof chrome;
     }
 
     return chrome;

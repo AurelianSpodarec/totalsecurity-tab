@@ -10,7 +10,6 @@ type SelectWindowProps = {
 
 export function SelectWindow({
   windows,
-  currentWindowId,
   value,
   onChange,
 }: SelectWindowProps) {

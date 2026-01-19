@@ -1,6 +1,6 @@
 import { AbstractApi } from "../../AbstractApi";
-import { MessageSender } from "./MessageSender";
 import { Promises } from "../../Utility/Promises";
+import type { MessageSender } from "./types";
 
 export class RuntimeApi extends AbstractApi {
   /**
@@ -18,9 +18,17 @@ export class RuntimeApi extends AbstractApi {
       payload: payload,
     };
 
-    return this.isMv2() && this.useChromeApi()
-      ? Promises.wrap((callback) => this.getBrowserApi().runtime.sendMessage(extensionId, message, options, callback))
-      : this.getBrowserApi().runtime.sendMessage(extensionId, message, options);
+    if (this.isMv2() && this.useChromeApi()) {
+      if (extensionId) {
+        return Promises.wrap((callback) => this.getBrowserApi().runtime.sendMessage(extensionId, message, options, callback));
+      }
+      return Promises.wrap((callback) => this.getBrowserApi().runtime.sendMessage(message, options, callback));
+    }
+
+    if (extensionId) {
+      return this.getBrowserApi().runtime.sendMessage(extensionId, message, options);
+    }
+    return this.getBrowserApi().runtime.sendMessage(message, options);
   }
 
   /**
