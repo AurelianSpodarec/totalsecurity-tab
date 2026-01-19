@@ -30,7 +30,7 @@ export function TabCard({ tab, onClick, onPin, onClose, className }: TabCardProp
     <div
       className={Html.joinClasses(
         "flex items-center justify-between gap-3",
-        active ? "bg-blue-500 dark:bg-blue-500" : "bg-gray-700 dark:bg-gray-700",
+        active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
         "rounded",
         "p-3",
         "text-base font-base text-gray-900 dark:text-white",
