@@ -2,6 +2,7 @@ import { Pencil1Icon } from "@radix-ui/react-icons";
 import { Html } from "@packages/utility";
 import { TabGroupColor } from "@packages/ext-api";
 import { useRef } from "react";
+import { Button } from "@packages/components";
 
 type TabGroupHeaderProps = {
   title?: string;
@@ -37,8 +38,7 @@ export function TabGroupHeader({
       title={resolvedTitle || "Untitled group"}
       onClick={onToggle}
     >
-      <button
-        type="button"
+      <Button
         aria-hidden
         className={Html.joinClasses(
           "shrink-0",
@@ -56,8 +56,7 @@ export function TabGroupHeader({
         >
           <path d="M11.646 15.146 5.854 9.354a.5.5 0 0 1 .353-.854h11.586a.5.5 0 0 1 .353.854l-5.793 5.792a.5.5 0 0 1-.707 0" />
         </svg>
-      </button>
-
+      </Button>
 
       <div
         className={Html.joinClasses(
@@ -75,8 +74,7 @@ export function TabGroupHeader({
         </span>
 
         {onEdit && (
-          <button
-            type="button"
+          <Button
             aria-label="Edit group"
             className={Html.joinClasses(
               "ml-1 p-1 rounded transition-colors hover:bg-black/10"
@@ -90,7 +88,7 @@ export function TabGroupHeader({
             }}
           >
             <Pencil1Icon aria-hidden className="size-3" />
-          </button>
+          </Button>
         )}
       </div>
     </div>
