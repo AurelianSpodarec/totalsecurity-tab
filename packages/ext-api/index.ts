@@ -1,3 +1,4 @@
+export { AbstractApi } from "./src/AbstractApi";
 export { RuntimeApi } from "./src/Api/Runtime/RuntimeApi";
 export type { MessageSender, OnInstalledReason } from "./src/Api/Runtime/types";
 

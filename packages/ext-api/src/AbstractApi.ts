@@ -1,7 +1,21 @@
 declare const browser: typeof chrome | undefined;
 
 export class AbstractApi {
+  private static injectedBrowserApi: typeof chrome | null = null;
+
+  /**
+   * Inject a mock browser API for testing purposes.
+   * Call with null to reset to the real browser API.
+   */
+  public static setBrowserApi(api: typeof chrome | null): void {
+    this.injectedBrowserApi = api;
+  }
+
   protected static getBrowserApi(): typeof chrome {
+    if (this.injectedBrowserApi) {
+      return this.injectedBrowserApi;
+    }
+
     if (typeof browser !== "undefined") {
       return browser as typeof chrome;
     }

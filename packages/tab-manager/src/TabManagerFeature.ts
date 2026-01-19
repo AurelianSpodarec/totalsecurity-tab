@@ -22,7 +22,7 @@ export class TabManagerFeature {
     const tabs = window.tabs || ([] as Array<Tab>);
 
     const sessionTabs: Array<SessionTab> = await Promise.all(
-      tabs.map(async (tab) => {
+      tabs.map(async (tab: Tab) => {
         const groupId = tab.groupId ?? -1;
         let groupColor;
 

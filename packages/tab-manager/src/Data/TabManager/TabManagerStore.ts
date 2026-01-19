@@ -1,6 +1,9 @@
 import { DataStore } from "treeduxjs";
 import { Treedux } from "treeduxjs";
 import { SyncWindowMutator } from "./Mutator/SyncWindowMutator";
+import { AddTabMutator } from "./Mutator/AddTabMutator";
+import { UpdateTabMutator } from "./Mutator/UpdateTabMutator";
+import { RemoveTabMutator } from "./Mutator/RemoveTabMutator";
 import { Session } from "./Type/Session";
 
 export interface TabManagerStoreInterface {
@@ -12,6 +15,9 @@ export class TabManagerStore {
   public static mutators = {
     session: {
       syncWindow: (treedux: Treedux) => new SyncWindowMutator(treedux),
+      addTab: (treedux: Treedux) => new AddTabMutator(treedux),
+      updateTab: (treedux: Treedux) => new UpdateTabMutator(treedux),
+      removeTab: (treedux: Treedux) => new RemoveTabMutator(treedux),
       windows: {}, // Here to satisfy types
     },
   };

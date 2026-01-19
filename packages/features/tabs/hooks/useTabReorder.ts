@@ -1,191 +1,24 @@
 import { useMemo, useEffect, useRef, useState } from "react";
-import { SessionTab, SessionWindow, clampTabIndexForPinned, getPinnedTabCount } from "@packages/tab-manager";
+import {
+  SessionTab,
+  SessionWindow,
+  clampTabIndexForPinned,
+  getPinnedTabCount,
+  buildListItems,
+  getItemKey,
+  TabListItem,
+  TabItem,
+  GroupTitleItem,
+} from "@packages/tab-manager";
 import { TabGroupsApi, TabsApi, TabGroupColor } from "@packages/ext-api";
+import { useMoveQueue } from "./useMoveQueue";
 
-export type TabItem = {
-  type: "tab";
-  tab: SessionTab;
-};
-
-export type GroupTitleItem = {
-  type: "group";
-  groupId: number;
-  groupTitle?: string;
-  groupColor?: TabGroupColor;
-};
-
-export type TabListItem = TabItem | GroupTitleItem;
-
-export function buildListItems(tabs: SessionTab[]): TabListItem[] {
-  const result: TabListItem[] = [];
-  const seenGroups = new Set<number>();
-
-  for (const tab of tabs) {
-    const gid = tab.groupId;
-    if (gid !== -1 && !seenGroups.has(gid)) {
-      seenGroups.add(gid);
-      result.push({ type: "group", groupId: gid, groupTitle: tab.groupTitle, groupColor: tab.groupColor });
-    }
-    result.push({ type: "tab", tab });
-  }
-  return result;
-}
-
-export function getItemKey(item: TabListItem): string {
-  return item.type === "tab" ? `tab-${item.tab.id}` : `group-${item.groupId}`;
-}
+export { buildListItems, getItemKey };
+export type { TabListItem, TabItem, GroupTitleItem };
 
 type UseTabReorderArgs = {
   window: SessionWindow;
 };
-
-type MoveRequest = {
-  tabId: number;
-  windowId: number;
-  index: number;
-  immediate?: boolean;
-};
-
-function useTabMoveQueue(onError?: (err: unknown) => void) {
-  const throttleMs = 75;
-  const moveTimeout = useRef<number | null>(null);
-  const moveInFlight = useRef(false);
-  const moveTabId = useRef<number | null>(null);
-  const moveWindowId = useRef<number | null>(null);
-  const pendingIndex = useRef<number | null>(null);
-  const lastCommittedIndex = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (moveTimeout.current) clearTimeout(moveTimeout.current);
-    };
-  }, []);
-
-  const flush = () => {
-    if (moveInFlight.current) return;
-    const tabId = moveTabId.current;
-    const windowId = moveWindowId.current;
-    const index = pendingIndex.current;
-    if (!tabId || !windowId || index == null) return;
-
-    pendingIndex.current = null;
-    if (lastCommittedIndex.current === index) return;
-
-    moveInFlight.current = true;
-    TabsApi.move(tabId, { index, windowId })
-      .then(() => { lastCommittedIndex.current = index; })
-      .catch((err) => { onError?.(err); })
-      .finally(() => {
-        moveInFlight.current = false;
-        if (pendingIndex.current != null) flush();
-      });
-  };
-
-  const reset = () => {
-    if (moveTimeout.current) clearTimeout(moveTimeout.current);
-    moveTimeout.current = null;
-    moveInFlight.current = false;
-    moveTabId.current = null;
-    moveWindowId.current = null;
-    pendingIndex.current = null;
-    lastCommittedIndex.current = null;
-  };
-
-  const requestMove = ({ tabId, windowId, index, immediate }: MoveRequest) => {
-    moveTabId.current = tabId;
-    moveWindowId.current = windowId;
-    pendingIndex.current = index;
-
-    if (immediate) {
-      if (moveTimeout.current) clearTimeout(moveTimeout.current);
-      moveTimeout.current = null;
-      flush();
-      return;
-    }
-
-    if (moveTimeout.current) return;
-    moveTimeout.current = setTimeout(() => {
-      moveTimeout.current = null;
-      flush();
-    }, throttleMs) as unknown as number;
-  };
-
-  return { requestMove, reset };
-}
-
-type GroupMoveRequest = {
-  groupId: number;
-  windowId: number;
-  index: number;
-  immediate?: boolean;
-};
-
-function useGroupMoveQueue(onError?: (err: unknown) => void) {
-  const throttleMs = 75;
-  const moveTimeout = useRef<number | null>(null);
-  const moveInFlight = useRef(false);
-  const moveGroupId = useRef<number | null>(null);
-  const moveWindowId = useRef<number | null>(null);
-  const pendingIndex = useRef<number | null>(null);
-  const lastCommittedIndex = useRef<number | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (moveTimeout.current) clearTimeout(moveTimeout.current);
-    };
-  }, []);
-
-  const flush = () => {
-    if (moveInFlight.current) return;
-    const groupId = moveGroupId.current;
-    const windowId = moveWindowId.current;
-    const index = pendingIndex.current;
-    if (!groupId || !windowId || index == null) return;
-
-    pendingIndex.current = null;
-    if (lastCommittedIndex.current === index) return;
-
-    moveInFlight.current = true;
-    TabGroupsApi.move(groupId, { index, windowId })
-      .then(() => { lastCommittedIndex.current = index; })
-      .catch((err) => { onError?.(err); })
-      .finally(() => {
-        moveInFlight.current = false;
-        if (pendingIndex.current != null) flush();
-      });
-  };
-
-  const reset = () => {
-    if (moveTimeout.current) clearTimeout(moveTimeout.current);
-    moveTimeout.current = null;
-    moveInFlight.current = false;
-    moveGroupId.current = null;
-    moveWindowId.current = null;
-    pendingIndex.current = null;
-    lastCommittedIndex.current = null;
-  };
-
-  const requestMove = ({ groupId, windowId, index, immediate }: GroupMoveRequest) => {
-    moveGroupId.current = groupId;
-    moveWindowId.current = windowId;
-    pendingIndex.current = index;
-
-    if (immediate) {
-      if (moveTimeout.current) clearTimeout(moveTimeout.current);
-      moveTimeout.current = null;
-      flush();
-      return;
-    }
-
-    if (moveTimeout.current) return;
-    moveTimeout.current = setTimeout(() => {
-      moveTimeout.current = null;
-      flush();
-    }, throttleMs) as unknown as number;
-  };
-
-  return { requestMove, reset };
-}
 
 export function useTabReorder({ window }: UseTabReorderArgs) {
   const [tabs, setTabs] = useState(window.tabs);
@@ -197,17 +30,23 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   const lastRequestedIndex = useRef<number | null>(null);
   const originalDraggedTab = useRef<SessionTab | null>(null);
 
-  const moveQueue = useTabMoveQueue((err) => {
-    console.error(err);
-    setTabs(window.tabs);
-    tabsRef.current = window.tabs;
-    lastRequestedIndex.current = null;
+  const moveQueue = useMoveQueue<number>({
+    executeMove: (tabId, windowId, index) => TabsApi.move(tabId, { index, windowId }),
+    onError: (err) => {
+      console.error(err);
+      setTabs(window.tabs);
+      tabsRef.current = window.tabs;
+      lastRequestedIndex.current = null;
+    },
   });
 
-  const groupMoveQueue = useGroupMoveQueue((err) => {
-    console.error(err);
-    setTabs(window.tabs);
-    tabsRef.current = window.tabs;
+  const groupMoveQueue = useMoveQueue<number>({
+    executeMove: (groupId, windowId, index) => TabGroupsApi.move(groupId, { index, windowId }),
+    onError: (err) => {
+      console.error(err);
+      setTabs(window.tabs);
+      tabsRef.current = window.tabs;
+    },
   });
 
   const lastRequestedGroupIndex = useRef<number | null>(null);
@@ -235,7 +74,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
     lastRequestedIndex.current = clampedIndex;
 
     moveQueue.requestMove({
-      tabId,
+      id: tabId,
       windowId: window.id,
       index: clampedIndex,
       immediate,
@@ -349,7 +188,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
         if (lastRequestedGroupIndex.current !== clampedIndex) {
           lastRequestedGroupIndex.current = clampedIndex;
           groupMoveQueue.requestMove({
-            groupId: gid,
+            id: gid,
             windowId: window.id,
             index: clampedIndex,
           });
