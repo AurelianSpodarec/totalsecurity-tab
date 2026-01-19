@@ -3,7 +3,8 @@ import { TabList, SelectWindow } from "@packages/features";
 import { WindowsApi } from "@packages/ext-api";
 import { useWindows } from "@packages/hooks";
 import { useState } from "react";
-import { SettingsModal } from "./SettingsModal";
+import { SettingsModal } from "../settings-modal";
+import { Button } from "@packages/components";
 
 export function SidePanelApp() {
   const {
@@ -43,8 +44,7 @@ export function SidePanelApp() {
             Total Tabs
           </h1>
 
-          <button
-            type="button"
+          <Button
             className={Html.joinClasses(
               "rounded",
               "px-3 py-2",
@@ -57,7 +57,7 @@ export function SidePanelApp() {
             onClick={() => setIsSettingsOpen(true)}
           >
             Settings
-          </button>
+          </Button>
         </div>
         <SelectWindow
           windows={windows}

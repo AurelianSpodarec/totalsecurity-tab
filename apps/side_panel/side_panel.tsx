@@ -1,6 +1,6 @@
 import "../../css/styles.css";
 import { createRoot } from "react-dom/client";
-import { SidePanelApp } from "./src/SidePanelApp";
+import { SidePanelApp } from "./src/side-panel/SidePanelApp";
 import { Redux } from "@packages/state";
 
 console.log("Sidebar script loaded");

@@ -1,10 +1,10 @@
 import { Html } from "@packages/utility";
 import { BarChartIcon, GearIcon } from "@radix-ui/react-icons";
 import { useEffect, useRef, useState } from "react";
-import { SettingsModalContent } from "./settings/SettingsModalContent";
-import { SettingsModalHeader } from "./settings/SettingsModalHeader";
-import { SettingsModalNav } from "./settings/SettingsModalNav";
-import { SettingsTab, SettingsTabId } from "./settings/types";
+import { SettingsModalContent } from "./SettingsModalContent";
+import { SettingsModalHeader } from "./SettingsModalHeader";
+import { SettingsModalNav } from "./SettingsModalNav";
+import { SettingsTab, SettingsTabId } from "./types";
 
 const SETTINGS_TABS = [
   { id: "themes", label: "Themes", icon: <GearIcon /> },
