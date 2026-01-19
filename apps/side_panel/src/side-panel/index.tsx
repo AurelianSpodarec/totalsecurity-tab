@@ -35,15 +35,13 @@ export function SidePanelApp() {
         )}
       >
         <div className={Html.joinClasses("flex items-center justify-between", "gap-3")}>
-          <h1
-            className={Html.joinClasses(
-              "text-2xl font-semibold",
-              "text-gray-900 dark:text-white"
-            )}
-          >
-            Total Tabs
-          </h1>
 
+          <SelectWindow
+            windows={windows}
+            currentWindowId={currentWindowId}
+            value={selectedWindowId}
+            onChange={setSelectedWindowId}
+          />
           <Button
             className={Html.joinClasses(
               "rounded",
@@ -59,12 +57,7 @@ export function SidePanelApp() {
             Settings
           </Button>
         </div>
-        <SelectWindow
-          windows={windows}
-          currentWindowId={currentWindowId}
-          value={selectedWindowId}
-          onChange={setSelectedWindowId}
-        />
+
       </div>
 
       <div

@@ -97,7 +97,7 @@ export function GroupEditPopup({
         ref={popupRef}
         className={Html.joinClasses(
           "absolute",
-          "w-[360px] max-w-[calc(100vw-16px)]",
+          "w-[290px] max-w-[calc(90vw-16px)]",
           "rounded-md",
           "bg-gray-700 dark:bg-gray-700",
           "shadow-lg",
@@ -110,7 +110,8 @@ export function GroupEditPopup({
         aria-label={`Edit tab group ${groupId}`}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-center gap-2">
+
           <input
             ref={inputRef}
             value={title}
@@ -118,17 +119,17 @@ export function GroupEditPopup({
             placeholder="Group name"
             className={Html.joinClasses(
               "flex-1",
-              "min-w-0",
+              "w-full",
               "bg-transparent",
               "outline-none",
               "text-sm",
               "px-2 py-1",
+              "mb-2",
               "rounded",
               "focus:bg-gray-600/40"
             )}
           />
-
-          <div className="flex items-center gap-1 flex-wrap justify-end">
+          <div className="flex items-center gap-2 flex-wrap justify-between">
             {TAB_GROUP_COLORS.map((c) => {
               const selected = c === color;
               return (
@@ -137,7 +138,7 @@ export function GroupEditPopup({
                   type="button"
                   data-tab-group-color={c}
                   className={Html.joinClasses(
-                    "w-4 h-4",
+                    "w-5 h-5",
                     "rounded-full",
                     "border",
                     selected ? "border-white" : "border-white/20",
