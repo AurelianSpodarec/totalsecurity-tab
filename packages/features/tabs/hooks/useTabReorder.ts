@@ -136,7 +136,10 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
       const finalIdx = nextTabs.findIndex((t) => t.id === tabId);
       const itemIdx = nextItems.findIndex((it) => it.type === "tab" && it.tab.id === tabId);
-      const { groupId, groupColor, groupTitle } = computeGroupFromItemNeighbors(nextItems, itemIdx >= 0 ? itemIdx : finalIdx);
+      const { groupId, groupColor, groupTitle } = computeGroupFromItemNeighbors(
+        nextItems,
+        itemIdx >= 0 ? itemIdx : finalIdx
+      );
       nextTabs = nextTabs.map((t) =>
         t.id === tabId ? { ...t, groupId, groupColor, groupTitle } : t
       );

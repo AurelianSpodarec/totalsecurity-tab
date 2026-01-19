@@ -1,64 +1,13 @@
 import { Html } from "@packages/utility";
 import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SessionWindow, SessionTab } from "@packages/tab-manager";
-import { Reorder, AnimatePresence, motion } from "motion/react";
+import { SessionWindow } from "@packages/tab-manager";
+import { Reorder } from "motion/react";
 import { TabGroupColor, TabGroupsApi, TabGroupsUpdateInfo } from "@packages/ext-api";
 import { TabCard } from "./TabCard";
 import { GroupEditPopup } from "./GroupEditPopup";
 import { GroupTitleCard } from "./GroupTitleCard";
 import { useTabReorder, getItemKey, TabListItem } from "../hooks/useTabReorder";
 
-type TabGroup = {
-  type: "grouped";
-  groupId: number;
-  groupTitle?: string;
-  groupColor?: TabGroupColor;
-  tabs: SessionTab[];
-};
-
-type UngroupedTab = {
-  type: "ungrouped";
-  tab: SessionTab;
-};
-
-type GroupedListItem = TabGroup | UngroupedTab;
-
-function buildGroupedItems(items: TabListItem[]): GroupedListItem[] {
-  const result: GroupedListItem[] = [];
-  let currentGroup: TabGroup | null = null;
-
-  for (const item of items) {
-    if (item.type === "group") {
-      if (currentGroup) {
-        result.push(currentGroup);
-      }
-      currentGroup = {
-        type: "grouped",
-        groupId: item.groupId,
-        groupTitle: item.groupTitle,
-        groupColor: item.groupColor,
-        tabs: [],
-      };
-    } else {
-      const tab = item.tab;
-      if (tab.groupId !== -1 && currentGroup && tab.groupId === currentGroup.groupId) {
-        currentGroup.tabs.push(tab);
-      } else {
-        if (currentGroup) {
-          result.push(currentGroup);
-          currentGroup = null;
-        }
-        result.push({ type: "ungrouped", tab });
-      }
-    }
-  }
-
-  if (currentGroup) {
-    result.push(currentGroup);
-  }
-
-  return result;
-}
 
 type TabListProps = {
   className?: string;
@@ -83,9 +32,9 @@ export function TabList({
     handleTabClose,
   } = useTabReorder({ window });
 
-  const groupedItems = useMemo(() => buildGroupedItems(items), [items]);
-
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
+  const [isDragging, setIsDragging] = useState(false);
+  const [reorderKeys, setReorderKeys] = useState<string[]>([]);
 
   const [editingGroup, setEditingGroup] = useState<
     | {
@@ -103,11 +52,15 @@ export function TabList({
 
   const activeEditingGroup = useMemo(() => {
     if (!editingGroup) return null;
-    const exists = groupedItems.some(
-      (it) => it.type === "grouped" && it.groupId === editingGroup.groupId
+
+    // Groups are represented as explicit list items (inserted by `buildListItems`).
+    // Keep the edit popup anchored only while the group still exists.
+    const exists = items.some(
+      (it) => it.type === "group" && it.groupId === editingGroup.groupId
     );
+
     return exists ? editingGroup : null;
-  }, [editingGroup, groupedItems]);
+  }, [editingGroup, items]);
 
   // Debounced title sync while typing.
   useEffect(() => {
@@ -174,12 +127,49 @@ export function TabList({
     });
   }, [items, collapsedGroups]);
 
-  // When reordering visible items, reconstruct full item list with collapsed tabs
-  const handleVisibleReorder = (newVisibleItems: TabListItem[]) => {
+  const handleItemDragStart = useCallback(
+    (item: TabListItem) => {
+      setIsDragging(true);
+      handleDragStart(item);
+    },
+    [handleDragStart]
+  );
+
+  const handleItemDragEnd = useCallback(() => {
+    handleDragEnd();
+    setIsDragging(false);
+  }, [handleDragEnd]);
+
+  const itemsByKey = useMemo(() => {
+    return new Map(items.map((it) => [getItemKey(it), it] as const));
+  }, [items]);
+
+  const visibleKeys = useMemo(() => {
+    return visibleItems.map(getItemKey);
+  }, [visibleItems]);
+
+  // Keep Framer Motion Reorder stable while dragging:
+  // - During drag, Reorder continuously emits the next key order.
+  // - Outside drag, we sync to the derived keys from the current data model.
+  useEffect(() => {
+    if (isDragging) return;
+    setReorderKeys(visibleKeys);
+  }, [visibleKeys, isDragging]);
+
+  // When reordering visible items, reconstruct full item list with collapsed tabs.
+  // Note: Reorder is driven by stable string keys so dragging doesn't get cancelled
+  // when tab objects are cloned/updated mid-drag.
+  const handleVisibleReorder = (newVisibleKeys: string[]) => {
+    setReorderKeys(newVisibleKeys);
+
+    const newVisibleItems = newVisibleKeys
+      .map((key) => itemsByKey.get(key))
+      .filter((it): it is TabListItem => Boolean(it));
+
     const result: TabListItem[] = [];
     for (const item of newVisibleItems) {
       result.push(item);
-      // After a collapsed group header, insert its tabs
+      // After a collapsed group header, insert its tabs.
       if (item.type === "group" && collapsedGroups.has(String(item.groupId))) {
         const groupTabs = items.filter(
           (i) => i.type === "tab" && i.tab.groupId === item.groupId
@@ -187,6 +177,7 @@ export function TabList({
         result.push(...groupTabs);
       }
     }
+
     handleReorder(result);
   };
 
@@ -219,69 +210,44 @@ export function TabList({
           }}
         />
       )}
-      <Reorder.Group values={visibleItems} onReorder={handleVisibleReorder} as="div">
+      <Reorder.Group values={reorderKeys} onReorder={handleVisibleReorder} as="div">
         <div className="flex flex-col gap-3 grow overflow-y-auto">
-          {groupedItems.map((groupedItem) => {
-            if (groupedItem.type === "ungrouped") {
-              const item = items.find(
-                (i) => i.type === "tab" && i.tab.id === groupedItem.tab.id
-              );
-              if (!item) return null;
+          {reorderKeys.map((key) => {
+            const item = itemsByKey.get(key);
+            if (!item) return null;
+
+            if (item.type === "group") {
+              const groupIdStr = String(item.groupId);
+              const isExpanded = !collapsedGroups.has(groupIdStr);
 
               return (
                 <Reorder.Item
-                  key={getItemKey(item)}
-                  value={item}
+                  key={key}
+                  value={key}
                   as="div"
-                  onDragStart={() => handleDragStart(item)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <TabCard
-                    tab={groupedItem.tab}
-                    onClick={() => handleTabClick(groupedItem.tab)}
-                    onPin={() => handleTabPin(groupedItem.tab)}
-                    onClose={() => handleTabClose(groupedItem.tab)}
-                  />
-                </Reorder.Item>
-              );
-            }
-
-            const groupItem = items.find(
-              (i) => i.type === "group" && i.groupId === groupedItem.groupId
-            );
-            if (!groupItem) return null;
-
-            const groupIdStr = String(groupedItem.groupId);
-            const isExpanded = !collapsedGroups.has(groupIdStr);
-
-            return (
-              <div key={`group-${groupedItem.groupId}`} className="flex flex-col gap-3">
-                <Reorder.Item
-                  value={groupItem}
-                  as="div"
-                  onDragStart={() => handleDragStart(groupItem)}
-                  onDragEnd={handleDragEnd}
+                  onDragStart={() => handleItemDragStart(item)}
+                  onDragEnd={() => handleItemDragEnd()}
                 >
                   <GroupTitleCard
                     title={
-                      activeEditingGroup?.groupId === groupedItem.groupId
+                      activeEditingGroup?.groupId === item.groupId
                         ? activeEditingGroup.draftTitle
-                        : groupedItem.groupTitle
+                        : item.groupTitle
                     }
                     groupColor={
-                      activeEditingGroup?.groupId === groupedItem.groupId
+                      activeEditingGroup?.groupId === item.groupId
                         ? activeEditingGroup.draftColor
-                        : groupedItem.groupColor
+                        : item.groupColor
                     }
                     isExpanded={isExpanded}
                     onToggle={() => toggleGroup(groupIdStr)}
                     onEdit={(anchorRect) => {
-                      const initialTitle = groupedItem.groupTitle ?? "";
-                      const initialColor = groupedItem.groupColor ?? "grey";
+                      const initialTitle = item.groupTitle ?? "";
+                      const initialColor = item.groupColor ?? "grey";
                       lastSentTitleRef.current = initialTitle;
                       lastSentColorRef.current = initialColor;
                       setEditingGroup({
-                        groupId: groupedItem.groupId,
+                        groupId: item.groupId,
                         anchorRect,
                         draftTitle: initialTitle,
                         draftColor: initialColor,
@@ -289,51 +255,34 @@ export function TabList({
                     }}
                   />
                 </Reorder.Item>
+              );
+            }
 
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="flex flex-col gap-3 overflow-hidden"
-                    >
-                      {groupedItem.tabs.map((tab) => {
-                        const tabItem = items.find(
-                          (i) => i.type === "tab" && i.tab.id === tab.id
-                        );
-                        if (!tabItem) return null;
+            const tab = item.tab;
+            const displayTab =
+              activeEditingGroup?.groupId === tab.groupId
+                ? {
+                    ...tab,
+                    groupTitle: activeEditingGroup.draftTitle,
+                    groupColor: activeEditingGroup.draftColor,
+                  }
+                : tab;
 
-                        return (
-                          <Reorder.Item
-                            key={`tab-${tab.id}`}
-                            value={tabItem}
-                            as="div"
-                            onDragStart={() => handleDragStart(tabItem)}
-                            onDragEnd={handleDragEnd}
-                          >
-                            <TabCard
-                              tab={
-                                activeEditingGroup?.groupId === groupedItem.groupId
-                                  ? {
-                                      ...tab,
-                                      groupTitle: activeEditingGroup.draftTitle,
-                                      groupColor: activeEditingGroup.draftColor,
-                                    }
-                                  : tab
-                              }
-                              onClick={() => handleTabClick(tab)}
-                              onPin={() => handleTabPin(tab)}
-                              onClose={() => handleTabClose(tab)}
-                            />
-                          </Reorder.Item>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+            return (
+              <Reorder.Item
+                key={key}
+                value={key}
+                as="div"
+                onDragStart={() => handleItemDragStart(item)}
+                onDragEnd={() => handleItemDragEnd()}
+              >
+                <TabCard
+                  tab={displayTab}
+                  onClick={() => handleTabClick(tab)}
+                  onPin={() => handleTabPin(tab)}
+                  onClose={() => handleTabClose(tab)}
+                />
+              </Reorder.Item>
             );
           })}
         </div>
