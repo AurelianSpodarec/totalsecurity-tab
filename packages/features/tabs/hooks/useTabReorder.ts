@@ -50,6 +50,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
   });
 
   const lastRequestedGroupIndex = useRef<number | null>(null);
+  const lastRequestedGroupId = useRef<number | null>(null);
 
   useEffect(() => {
     tabsRef.current = tabs;
@@ -146,8 +147,20 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
       tabsRef.current = nextTabs;
       setTabs(nextTabs);
+      // Sync itemsRef immediately so handleDragEnd sees latest items (effect runs after render).
+      itemsRef.current = buildListItems(nextTabs);
 
       if (finalIdx >= 0) enqueueChromeTabMove(tabId, finalIdx);
+
+      // Live group/ungroup in Chrome while dragging.
+      if (groupId !== lastRequestedGroupId.current) {
+        lastRequestedGroupId.current = groupId;
+        if (groupId === -1) {
+          TabsApi.ungroup(tabId).catch(console.error);
+        } else {
+          TabsApi.group(tabId, groupId).catch(console.error);
+        }
+      }
       return;
     }
 
@@ -183,6 +196,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
 
       tabsRef.current = reordered;
       setTabs(reordered);
+      itemsRef.current = buildListItems(reordered);
 
       // Calculate target index for group and enqueue Chrome move
       const firstTabIndex = reordered.findIndex((t) => t.groupId === gid);
@@ -209,6 +223,7 @@ export function useTabReorder({ window }: UseTabReorderArgs) {
     }
     lastRequestedIndex.current = null;
     lastRequestedGroupIndex.current = null;
+    lastRequestedGroupId.current = null;
     moveQueue.reset();
     groupMoveQueue.reset();
   };
