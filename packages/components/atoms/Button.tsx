@@ -7,14 +7,14 @@ export function Button({
   disabled = false,
   className = "",
   children,
-  ...rest
+  ...props
 }: ButtonProps) {
   return (
     <button
       type={type}
       disabled={disabled}
       className={className}
-      {...rest}
+      {...props}
     >
       {children}
     </button>

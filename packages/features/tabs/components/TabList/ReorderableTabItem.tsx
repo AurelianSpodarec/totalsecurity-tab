@@ -1,5 +1,5 @@
-import type { SessionTab } from "@packages/tab-manager";
 import { Reorder } from "motion/react";
+import type { SessionTab } from "@packages/tab-manager";
 import type { EditingTabGroup } from "../../hooks/useTabGroupEdit";
 import type { TabListItem } from "../../hooks/useTabReorder";
 import { TabItem } from "../TabItem";

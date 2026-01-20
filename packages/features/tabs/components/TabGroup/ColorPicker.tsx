@@ -25,7 +25,7 @@ export function ColorPicker({ colors, value, onChange, className }: ColorPickerP
             key={color}
             data-tab-group-color={color}
             className={Html.joinClasses(
-              "w-5 h-5",
+              "size-5",
               "rounded-full",
               "border",
               selected ? "scale-110 border-white" : "scale-100 border-white/20",

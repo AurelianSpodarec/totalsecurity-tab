@@ -37,18 +37,24 @@ export function ReorderableGroupHeader({
   handleItemDragStart,
   handleItemDragEnd,
 }: ReorderableGroupHeaderProps) {
-  const groupIdStr = String(item.groupId);
+
+  const groupId = item.groupId;
+  const groupIdStr = String(groupId);
+
+  const isEditing = activeEditingGroup?.groupId === groupId;
   const isExpanded = !collapsedGroups.has(groupIdStr);
 
-  const title =
-    activeEditingGroup?.groupId === item.groupId
-      ? activeEditingGroup.draftTitle
-      : item.groupTitle;
+  const title = isEditing ? activeEditingGroup.draftTitle : item.groupTitle;
+  const groupColor = isEditing ? activeEditingGroup.draftColor : item.groupColor;
 
-  const groupColor =
-    activeEditingGroup?.groupId === item.groupId
-      ? activeEditingGroup.draftColor
-      : item.groupColor;
+  const handleEdit = (anchorRect: DOMRect) => {
+    openEditor({
+      groupId,
+      anchorRect,
+      initialTitle: item.groupTitle ?? "",
+      initialColor: item.groupColor ?? "grey",
+    });
+  };
 
   return (
     <Reorder.Item
@@ -56,21 +62,14 @@ export function ReorderableGroupHeader({
       as="div"
       style={{ marginBottom: itemSpacing }}
       onDragStart={() => handleItemDragStart(item)}
-      onDragEnd={() => handleItemDragEnd()}
+      onDragEnd={handleItemDragEnd}
     >
       <TabGroupHeader
         title={title}
         groupColor={groupColor}
         isExpanded={isExpanded}
         onToggle={() => toggleGroup(groupIdStr)}
-        onEdit={(anchorRect) => {
-          openEditor({
-            groupId: item.groupId,
-            anchorRect,
-            initialTitle: item.groupTitle ?? "",
-            initialColor: item.groupColor ?? "grey",
-          });
-        }}
+        onEdit={handleEdit}
       />
     </Reorder.Item>
   );
