@@ -34,6 +34,8 @@ Hopefully this provides helpful context around my approach and the decisions I m
 - Set up ESLint and switched the code style from Allman to K&R as a pragmatic trade-off, since it is faster and simpler to configure and enforce consistently for this assessment.
 - Moved away from a flat project structure as the codebase grew, since it was becoming unclear what belonged where. Reorganised the code into UI atoms and feature-based modules, and renamed components (eg `WindowCard` to `TabList`) to better reflect their actual responsibilities.
 - Removed certain components that were only used in a single place, as keeping them as standalone components would have added unnecessary abstraction.
+- Isolate shared components (e.g. Select, Button, Input etc...) behind a stable component API, allowing the underlying implementation or library to be replaced in one location without impacting the rest of the codebase. This API/component serves as a contract.
+- Used ATOMIC Design principle as it scales well and separates the concern of components very well
 
 ## Tasks
 
