@@ -32,7 +32,6 @@ function isEditableTarget(target: EventTarget | null): boolean {
   const tag = target.tagName;
   if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
 
-  // Some components render focusable divs with textbox semantics.
   const role = target.getAttribute("role");
   if (role === "textbox" || role === "searchbox") return true;
 
@@ -131,7 +130,6 @@ export function KeyboardProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Capture so modals can intercept keys even if nested components stop propagation.
     window.addEventListener("keydown", onKeyDown, true);
     return () => window.removeEventListener("keydown", onKeyDown, true);
   }, [onKeyDown]);

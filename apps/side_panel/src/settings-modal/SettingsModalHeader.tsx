@@ -1,3 +1,4 @@
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { Html } from "@packages/utility";
 
 type SettingsModalHeaderProps = {
@@ -28,11 +29,13 @@ export function SettingsModalHeader({ onClose }: SettingsModalHeaderProps) {
 
       <button
         type="button"
+        aria-label="Close settings"
+        title="Close"
         className={Html.joinClasses(
           "shrink-0",
+          "flex items-center justify-center",
           "rounded",
-          "px-3 py-2",
-          "text-sm font-medium",
+          "p-2",
           "bg-[var(--tmit-settings-header-close-bg)]",
           "text-[color:var(--tmit-settings-header-close-text)]",
           "hover:bg-[var(--tmit-settings-header-close-bg-hover)]",
@@ -40,7 +43,7 @@ export function SettingsModalHeader({ onClose }: SettingsModalHeaderProps) {
         )}
         onClick={onClose}
       >
-        X
+        <Cross2Icon className="h-5 w-5" />
       </button>
     </header>
   );

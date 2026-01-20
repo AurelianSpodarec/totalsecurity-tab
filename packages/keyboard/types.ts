@@ -4,17 +4,9 @@ export type ShortcutOptions = {
   scope?: ShortcutScope;
   priority?: number;
   enabled?: boolean;
-
-  /** Default: true. */
   preventDefault?: boolean;
-
-  /** Default: false. */
   stopPropagation?: boolean;
-
-  /** Default: false. */
   allowInInput?: boolean;
-
-  /** Default: false. */
   allowRepeat?: boolean;
 };
 

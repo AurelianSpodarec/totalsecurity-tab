@@ -24,7 +24,6 @@ function GroupChevron({ expanded }: GroupChevronProps) {
       className={Html.joinClasses(
         "shrink-0",
         "size-4",
-        // Darker in light mode so it doesn't disappear against a white background.
         "text-gray-700 dark:text-gray-200",
         "transition-transform duration-200",
         expanded ? "rotate-0" : "-rotate-90"
@@ -90,7 +89,6 @@ export function TabGroupHeader({ title, groupColor, isExpanded = true, onToggle,
 
       <div
         className={Html.joinClasses(
-          // Keep the row full-width, but keep the "pill" sized to its content.
           "inline-flex min-w-0 max-w-[70%] items-center justify-start gap-1",
           "rounded-md px-3 py-1"
         )}

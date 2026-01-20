@@ -48,7 +48,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
           "relative",
           "h-full w-full",
           "tmit-app-bg",
-          "flex flex-col"
+          "flex flex-col",
+          "p-3"
         )}
         role="dialog"
         aria-modal="true"

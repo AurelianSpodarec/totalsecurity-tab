@@ -1,3 +1,4 @@
+import { GearIcon } from "@radix-ui/react-icons";
 import { Html } from "@packages/utility";
 import { TabList, SelectWindow } from "@packages/features";
 import { WindowsApi } from "@packages/ext-api";
@@ -35,18 +36,20 @@ export function SidePanelApp() {
         )}
       >
         <div className={Html.joinClasses("flex items-center justify-between", "gap-3")}>
-
           <SelectWindow
             windows={windows}
             currentWindowId={currentWindowId}
             value={selectedWindowId}
             onChange={setSelectedWindowId}
           />
+
           <Button
+            aria-label="Open settings"
+            title="Settings"
             className={Html.joinClasses(
+              "flex items-center justify-center",
               "rounded",
-              "px-3 py-2",
-              "text-sm font-medium",
+              "p-2",
               "bg-gray-200 dark:bg-gray-700",
               "text-gray-900 dark:text-white",
               "hover:bg-gray-300 dark:hover:bg-gray-600",
@@ -54,10 +57,9 @@ export function SidePanelApp() {
             )}
             onClick={() => setIsSettingsOpen(true)}
           >
-            Settings
+            <GearIcon className="h-5 w-5" />
           </Button>
         </div>
-
       </div>
 
       <div
