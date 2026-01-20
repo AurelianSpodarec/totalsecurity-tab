@@ -47,7 +47,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         className={Html.joinClasses(
           "relative",
           "h-full w-full",
-          "bg-white dark:bg-gray-800",
+          "tmit-app-bg",
           "flex flex-col"
         )}
         role="dialog"

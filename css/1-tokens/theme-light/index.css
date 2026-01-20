@@ -1,13 +1,10 @@
 /* ============================================================================
- * # Theme: Total Security
- *
- * Theme tokens are scoped so we can ship multiple themes at once.
- * Swapping themes becomes a single attribute change on the document root.
+ * # Theme: Light
  * ============================================================================ */
 
-[data-theme="total-security"] {
+[data-theme="light"] {
   /* App */
-  --tmit-color-background: #1f2937;
+  --tmit-color-background: #ffffff;
 
   /* Feature: Tab group colors (semantic aliases over the primitives palette) */
   --color-tab-group-grey: var(--color-chrome-tab-group-grey);

@@ -2,6 +2,11 @@
  * # Base
  * ============================================================================ */
 @layer base {
+  :root {
+    /* Safe fallback for the initial bootstrap (before JS applies a theme). */
+    --tmit-color-background: #ffffff;
+  }
+
   /*
    * Tab group colors
    *
@@ -56,6 +61,10 @@
 }
 
 @layer utilities {
+  .tmit-app-bg {
+    background-color: var(--tmit-color-background);
+  }
+
   /*
    * Fade-out text at the right edge without relying on background colors.
    *

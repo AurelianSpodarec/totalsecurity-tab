@@ -20,6 +20,7 @@
       "@packages/features": [ "packages/features/index.ts" ],
       "@packages/hooks": [ "packages/hooks/index.ts" ],
       "@packages/keyboard": [ "packages/keyboard/index.ts" ],
+      "@packages/settings": [ "packages/settings/index.ts" ],
       "@packages/state": [ "packages/state/index.ts" ],
       "@packages/tab-manager": [ "packages/tab-manager/index.ts" ],
       "@packages/utility": [ "packages/utility/index.ts" ]

@@ -8,9 +8,10 @@
  * ============================================================================ */
 @import "./1-tokens/global/primitives/chrome-tab-groups.css";
 
-/* Theme: Total Security
+/* Themes
 ------------------------------------------------------------------------------- */
 @import "./1-tokens/theme-total-security/index.css";
+@import "./1-tokens/theme-light/index.css";
 
 /* ============================================================================
  * 2-base

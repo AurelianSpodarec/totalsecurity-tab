@@ -22,7 +22,7 @@ export function SidePanelApp() {
       className={Html.joinClasses(
         "flex flex-col gap-3",
         "h-screen w-full",
-        "bg-white dark:bg-gray-800",
+        "tmit-app-bg",
         "pt-5"
       )}
     >
