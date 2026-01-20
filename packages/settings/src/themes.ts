@@ -6,6 +6,18 @@ export const THEMES = [
     isDark: true,
   },
   {
+    id: "mocha",
+    name: "Mocha",
+    previewBackground: "#1e1e2e",
+    isDark: true,
+  },
+  {
+    id: "midnight",
+    name: "Midnight",
+    previewBackground: "#15202b",
+    isDark: true,
+  },
+  {
     id: "light",
     name: "Light",
     previewBackground: "#ffffff",

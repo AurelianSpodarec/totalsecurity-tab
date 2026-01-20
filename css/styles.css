@@ -13,6 +13,8 @@
 /* Themes
 ------------------------------------------------------------------------------- */
 @import "./1-tokens/theme-total-security/index.css";
+@import "./1-tokens/theme-mocha/index.css";
+@import "./1-tokens/theme-midnight/index.css";
 @import "./1-tokens/theme-light/index.css";
 
 /* ============================================================================

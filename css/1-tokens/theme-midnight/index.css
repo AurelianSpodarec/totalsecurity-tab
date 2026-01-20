@@ -1,0 +1,25 @@
+/* ============================================================================
+ * # Theme: Midnight
+ *
+ * Cool blue-tinted dark theme inspired by X/Twitter dark mode.
+ * ============================================================================ */
+
+[data-theme="midnight"] {
+  --tmit-color-background: #15202b;
+
+  --tmit-tab-item-bg: #192734;
+  --tmit-tab-item-bg-hover: #22303c;
+  --tmit-tab-item-bg-active: #1d9bf0;
+
+  --tmit-tab-item-text: #ffffff;
+  --tmit-tab-item-text-active: #ffffff;
+
+  --tmit-tab-item-border: transparent;
+  --tmit-tab-item-border-active: transparent;
+
+  --tmit-tab-item-action-icon: #8899ac;
+  --tmit-tab-item-action-icon-active: var(--tmit-tab-item-text-active);
+  --tmit-tab-item-action-icon-pinned: #1d9bf0;
+
+  --tmit-tab-item-action-icon-bg-hover: rgb(136 153 172 / 0.3);
+}
