@@ -10,11 +10,6 @@
 
 /* Features */
 @theme {
-  /* Tab groups (Chrome group colors)
-   *
-   * By default we alias to the Chrome palette primitives.
-   * A theme can override these aliases if needed.
-   */
   --color-tab-group-grey: var(--color-chrome-tab-group-grey);
   --color-tab-group-blue: var(--color-chrome-tab-group-blue);
   --color-tab-group-red: var(--color-chrome-tab-group-red);
@@ -25,7 +20,7 @@
   --color-tab-group-cyan: var(--color-chrome-tab-group-cyan);
   --color-tab-group-orange: var(--color-chrome-tab-group-orange);
 
-  /* Group title chip variants (light bg + dark text) */
+
   --color-tab-group-grey-bg: var(--color-chrome-tab-group-grey-bg);
   --color-tab-group-grey-text: var(--color-chrome-tab-group-grey-text);
 

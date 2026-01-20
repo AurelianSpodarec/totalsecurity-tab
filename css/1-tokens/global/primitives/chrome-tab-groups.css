@@ -18,29 +18,29 @@
 
 
   --color-chrome-tab-group-grey-bg: #4d4e52;
-  --color-chrome-tab-group-grey-text: #dadce0;
+  --color-chrome-tab-group-grey-text: var(--color-chrome-tab-group-grey);
 
   --color-chrome-tab-group-blue-bg: #394458;
-  --color-chrome-tab-group-blue-text: #93b3f2;
+  --color-chrome-tab-group-blue-text: var(--color-chrome-tab-group-blue);
 
   --color-chrome-tab-group-red-bg: #533a3a;
-  --color-chrome-tab-group-red-text: #e49086;
+  --color-chrome-tab-group-red-text: var(--color-chrome-tab-group-red);
 
   --color-chrome-tab-group-yellow-bg: #564c33;
-  --color-chrome-tab-group-yellow-text: #f7d875;
+  --color-chrome-tab-group-yellow-text: var(--color-chrome-tab-group-yellow);
 
   --color-chrome-tab-group-green-bg: #37493f;
-  --color-chrome-tab-group-green-text: #91c799;
+  --color-chrome-tab-group-green-text: var(--color-chrome-tab-group-green);
 
   --color-chrome-tab-group-pink-bg: #563a4d;
-  --color-chrome-tab-group-pink-text: #f091c8;
+  --color-chrome-tab-group-pink-text: var(--color-chrome-tab-group-pink);
 
   --color-chrome-tab-group-purple-bg: #483958;
-  --color-chrome-tab-group-purple-text: #bc8bf2;
+  --color-chrome-tab-group-purple-text: var(--color-chrome-tab-group-purple);
 
   --color-chrome-tab-group-cyan-bg: #354d55;
-  --color-chrome-tab-group-cyan-text: #90d7e9;
+  --color-chrome-tab-group-cyan-text: var(--color-chrome-tab-group-cyan);
 
   --color-chrome-tab-group-orange-bg: #564236;
-  --color-chrome-tab-group-orange-text: #f0b07a;
+  --color-chrome-tab-group-orange-text: var(--color-chrome-tab-group-orange);
 }
