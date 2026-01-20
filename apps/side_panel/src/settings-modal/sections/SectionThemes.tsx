@@ -7,7 +7,7 @@ export function SectionThemes() {
 
   return (
     <div className={Html.joinClasses("flex flex-col", "gap-2")}>
-      <p className={Html.joinClasses("text-xs", "text-gray-500 dark:text-gray-400")}>
+      <p className={Html.joinClasses("text-xs", "text-[color:var(--tmit-theme-picker-desc-text)]")}>
         Pick a theme. This preference is saved locally.
       </p>
 
@@ -24,19 +24,23 @@ export function SectionThemes() {
                 "rounded",
                 "border",
                 isSelected
-                  ? "border-blue-500"
-                  : "border-gray-200 dark:border-gray-700",
+                  ? "border-[color:var(--tmit-theme-picker-item-border-selected)]"
+                  : "border-[color:var(--tmit-theme-picker-item-border)]",
                 "px-3 py-2",
                 "flex items-center gap-2",
                 "text-left",
-                "hover:bg-white/70 dark:hover:bg-gray-800/30",
+                "hover:bg-[var(--tmit-theme-picker-item-bg-hover)]",
                 "transition-colors"
               )}
               aria-pressed={isSelected}
             >
               <span
                 aria-hidden
-                className={Html.joinClasses("size-4", "rounded", "border border-black/10")}
+                className={Html.joinClasses(
+                  "size-4",
+                  "rounded",
+                  "border border-[color:var(--tmit-theme-picker-swatch-border)]"
+                )}
                 style={{ backgroundColor: theme.previewBackground }}
               />
 
@@ -47,7 +51,9 @@ export function SectionThemes() {
                     "block",
                     "truncate",
                     "text-sm",
-                    isSelected ? "text-gray-900 dark:text-white" : "text-gray-800 dark:text-gray-200"
+                    isSelected
+                      ? "text-[color:var(--tmit-theme-picker-item-text-selected)]"
+                      : "text-[color:var(--tmit-theme-picker-item-text)]"
                   )}
                 >
                   {theme.name}

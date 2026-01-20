@@ -23,7 +23,7 @@ function Chevron({ expanded }: ChevronProps) {
       className={Html.joinClasses(
         "shrink-0",
         "size-4",
-        "text-gray-700 dark:text-gray-200",
+        "text-[color:var(--tmit-settings-accordion-icon-text)]",
         "transition-transform duration-200",
         expanded ? "rotate-0" : "-rotate-90"
       )}
@@ -51,8 +51,8 @@ export function SettingsAccordionItem({
     <section
       className={Html.joinClasses(
         "rounded",
-        "border border-gray-200 dark:border-gray-700",
-        "bg-white/70 dark:bg-gray-800/70",
+        "border border-[color:var(--tmit-settings-accordion-border)]",
+        "bg-[var(--tmit-settings-accordion-surface)]",
         "backdrop-blur"
       )}
     >
@@ -67,8 +67,8 @@ export function SettingsAccordionItem({
           "px-3 py-3",
           "text-left",
           "select-none",
-          "text-gray-900 dark:text-white",
-          "hover:bg-gray-50 dark:hover:bg-gray-700/40",
+          "text-[color:var(--tmit-settings-accordion-title-text)]",
+          "hover:bg-[var(--tmit-settings-accordion-surface-hover)]",
           "transition-colors"
         )}
         aria-expanded={isExpanded}
@@ -78,7 +78,14 @@ export function SettingsAccordionItem({
         <span className={Html.joinClasses("min-w-0", "flex items-center gap-2")}
         >
           {icon ? (
-            <span aria-hidden className={Html.joinClasses("shrink-0",  "size-4", "text-gray-700 dark:text-gray-200")}>
+            <span
+              aria-hidden
+              className={Html.joinClasses(
+                "shrink-0",
+                "size-4",
+                "text-[color:var(--tmit-settings-accordion-icon-text)]"
+              )}
+            >
               {icon}
             </span>
           ) : null}
@@ -101,14 +108,19 @@ export function SettingsAccordionItem({
             transition={{ duration: 0.18, ease: "easeOut" }}
             className="overflow-hidden"
           >
-            <div className={Html.joinClasses("border-t border-gray-200 dark:border-gray-700", "p-3")}>
+            <div
+              className={Html.joinClasses(
+                "border-t border-[color:var(--tmit-settings-accordion-panel-border)]",
+                "p-3"
+              )}
+            >
               <div
                 className={Html.joinClasses(
                   "rounded",
-                  "bg-gray-50 dark:bg-gray-900/30",
+                  "bg-[var(--tmit-settings-accordion-panel-surface)]",
                   "p-3",
                   "text-sm",
-                  "text-gray-700 dark:text-gray-200"
+                  "text-[color:var(--tmit-settings-accordion-panel-text)]"
                 )}
               >
                 {children}

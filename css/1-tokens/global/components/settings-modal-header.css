@@ -1,0 +1,19 @@
+/* ============================================================================
+ * # Components: Settings Modal Header
+ * ============================================================================ */
+
+@layer base {
+  /**
+   * Defaults aligned with the light theme so the modal remains readable even
+   * before `[data-theme]` is applied.
+   */
+  :root {
+    --tmit-settings-header-border: #e5e7eb; /* tailwind gray-200 */
+
+    --tmit-settings-header-title-text: #111827; /* tailwind gray-900 */
+
+    --tmit-settings-header-close-bg: #e5e7eb; /* tailwind gray-200 */
+    --tmit-settings-header-close-bg-hover: #d1d5db; /* tailwind gray-300 */
+    --tmit-settings-header-close-text: #111827; /* tailwind gray-900 */
+  }
+}

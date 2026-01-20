@@ -11,7 +11,7 @@ export function SettingsModalHeader({ onClose }: SettingsModalHeaderProps) {
         "flex items-center justify-between",
         "gap-3",
         "p-2",
-        "border-b border-gray-200 dark:border-gray-700"
+        "border-b border-[color:var(--tmit-settings-header-border)]"
       )}
     >
       <div className="min-w-0">
@@ -19,7 +19,7 @@ export function SettingsModalHeader({ onClose }: SettingsModalHeaderProps) {
           id="settings-title"
           className={Html.joinClasses(
             "text-lg font-semibold",
-            "text-gray-900 dark:text-white"
+            "text-[color:var(--tmit-settings-header-title-text)]"
           )}
         >
           Settings
@@ -33,9 +33,9 @@ export function SettingsModalHeader({ onClose }: SettingsModalHeaderProps) {
           "rounded",
           "px-3 py-2",
           "text-sm font-medium",
-          "bg-gray-200 dark:bg-gray-700",
-          "text-gray-900 dark:text-white",
-          "hover:bg-gray-300 dark:hover:bg-gray-600",
+          "bg-[var(--tmit-settings-header-close-bg)]",
+          "text-[color:var(--tmit-settings-header-close-text)]",
+          "hover:bg-[var(--tmit-settings-header-close-bg-hover)]",
           "transition-colors"
         )}
         onClick={onClose}

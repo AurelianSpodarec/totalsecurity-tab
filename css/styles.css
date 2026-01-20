@@ -9,6 +9,9 @@
 @import "./1-tokens/global/primitives/chrome-tab-groups.css";
 @import "./1-tokens/global/components/tab-groups.css";
 @import "./1-tokens/global/components/tab-item.css";
+@import "./1-tokens/global/components/settings-modal-header.css";
+@import "./1-tokens/global/components/settings-accordion-item.css";
+@import "./1-tokens/global/components/theme-picker.css";
 
 /* Themes
 ------------------------------------------------------------------------------- */

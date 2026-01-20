@@ -1,0 +1,23 @@
+/* ============================================================================
+ * # Components: Theme Picker
+ * ============================================================================ */
+
+@layer base {
+  /**
+   * Defaults aligned with the light theme so the UI remains readable even
+   * before `[data-theme]` is applied.
+   */
+  :root {
+    --tmit-theme-picker-desc-text: #6b7280; /* tailwind gray-500 */
+
+    --tmit-theme-picker-item-border: #e5e7eb; /* tailwind gray-200 */
+    --tmit-theme-picker-item-border-selected: #2563eb; /* tailwind blue-600 */
+
+    --tmit-theme-picker-item-bg-hover: rgb(255 255 255 / 0.7);
+
+    --tmit-theme-picker-item-text: #1f2937; /* tailwind gray-800 */
+    --tmit-theme-picker-item-text-selected: #111827; /* tailwind gray-900 */
+
+    --tmit-theme-picker-swatch-border: rgb(0 0 0 / 0.1);
+  }
+}

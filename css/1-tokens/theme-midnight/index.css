@@ -22,4 +22,30 @@
   --tmit-tab-item-action-icon-pinned: #1d9bf0;
 
   --tmit-tab-item-action-icon-bg-hover: rgb(136 153 172 / 0.3);
+
+  /* Settings Modal Header */
+  --tmit-settings-header-border: #22303c;
+  --tmit-settings-header-title-text: #ffffff;
+  --tmit-settings-header-close-bg: #22303c;
+  --tmit-settings-header-close-bg-hover: #2a3a48;
+  --tmit-settings-header-close-text: #ffffff;
+
+  /* Settings Accordion Item */
+  --tmit-settings-accordion-border: #22303c;
+  --tmit-settings-accordion-surface: rgb(25 39 52 / 0.7);
+  --tmit-settings-accordion-surface-hover: rgb(34 48 60 / 0.4);
+  --tmit-settings-accordion-title-text: #ffffff;
+  --tmit-settings-accordion-icon-text: #8899ac;
+  --tmit-settings-accordion-panel-border: #22303c;
+  --tmit-settings-accordion-panel-surface: rgb(0 0 0 / 0.15);
+  --tmit-settings-accordion-panel-text: #e7e9ea;
+
+  /* Theme Picker */
+  --tmit-theme-picker-desc-text: #8899ac;
+  --tmit-theme-picker-item-border: #22303c;
+  --tmit-theme-picker-item-border-selected: #1d9bf0;
+  --tmit-theme-picker-item-bg-hover: rgb(34 48 60 / 0.3);
+  --tmit-theme-picker-item-text: #e7e9ea;
+  --tmit-theme-picker-item-text-selected: #ffffff;
+  --tmit-theme-picker-swatch-border: rgb(255 255 255 / 0.12);
 }
