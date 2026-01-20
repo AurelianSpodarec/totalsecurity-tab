@@ -3,44 +3,5 @@
  * ============================================================================ */
 
 [data-theme="light"] {
-  /* App */
   --tmit-color-background: #ffffff;
-
-  /* Feature: Tab group colors (semantic aliases over the primitives palette) */
-  --color-tab-group-grey: var(--color-chrome-tab-group-grey);
-  --color-tab-group-blue: var(--color-chrome-tab-group-blue);
-  --color-tab-group-red: var(--color-chrome-tab-group-red);
-  --color-tab-group-yellow: var(--color-chrome-tab-group-yellow);
-  --color-tab-group-green: var(--color-chrome-tab-group-green);
-  --color-tab-group-pink: var(--color-chrome-tab-group-pink);
-  --color-tab-group-purple: var(--color-chrome-tab-group-purple);
-  --color-tab-group-cyan: var(--color-chrome-tab-group-cyan);
-  --color-tab-group-orange: var(--color-chrome-tab-group-orange);
-
-  --color-tab-group-grey-bg: var(--color-chrome-tab-group-grey-bg);
-  --color-tab-group-grey-text: var(--color-chrome-tab-group-grey-text);
-
-  --color-tab-group-blue-bg: var(--color-chrome-tab-group-blue-bg);
-  --color-tab-group-blue-text: var(--color-chrome-tab-group-blue-text);
-
-  --color-tab-group-red-bg: var(--color-chrome-tab-group-red-bg);
-  --color-tab-group-red-text: var(--color-chrome-tab-group-red-text);
-
-  --color-tab-group-yellow-bg: var(--color-chrome-tab-group-yellow-bg);
-  --color-tab-group-yellow-text: var(--color-chrome-tab-group-yellow-text);
-
-  --color-tab-group-green-bg: var(--color-chrome-tab-group-green-bg);
-  --color-tab-group-green-text: var(--color-chrome-tab-group-green-text);
-
-  --color-tab-group-pink-bg: var(--color-chrome-tab-group-pink-bg);
-  --color-tab-group-pink-text: var(--color-chrome-tab-group-pink-text);
-
-  --color-tab-group-purple-bg: var(--color-chrome-tab-group-purple-bg);
-  --color-tab-group-purple-text: var(--color-chrome-tab-group-purple-text);
-
-  --color-tab-group-cyan-bg: var(--color-chrome-tab-group-cyan-bg);
-  --color-tab-group-cyan-text: var(--color-chrome-tab-group-cyan-text);
-
-  --color-tab-group-orange-bg: var(--color-chrome-tab-group-orange-bg);
-  --color-tab-group-orange-text: var(--color-chrome-tab-group-orange-text);
 }

@@ -2,45 +2,46 @@
  * # Primitives: Chrome tab group colors
  *
  * Source-of-truth palette keyed by Chrome's TabGroupColor values.
- * Themes may alias/override these.
+ *
+ * Note: the values are Chrome-derived, but the token names are intentionally
+ * generic so components can just consume `--color-tab-group-*`.
  * ============================================================================ */
 
 @theme {
-  --color-chrome-tab-group-grey: #dadce0;
-  --color-chrome-tab-group-blue: #93b3f2;
-  --color-chrome-tab-group-red: #e49086;
-  --color-chrome-tab-group-yellow: #f7d875;
-  --color-chrome-tab-group-green: #91c799;
-  --color-chrome-tab-group-pink: #f091c8;
-  --color-chrome-tab-group-purple: #bc8bf2;
-  --color-chrome-tab-group-cyan: #90d7e9;
-  --color-chrome-tab-group-orange: #f0b07a;
+  --color-tab-group-grey: #dadce0;
+  --color-tab-group-blue: #93b3f2;
+  --color-tab-group-red: #e49086;
+  --color-tab-group-yellow: #f7d875;
+  --color-tab-group-green: #91c799;
+  --color-tab-group-pink: #f091c8;
+  --color-tab-group-purple: #bc8bf2;
+  --color-tab-group-cyan: #90d7e9;
+  --color-tab-group-orange: #f0b07a;
 
+  --color-tab-group-grey-bg: #4d4e52;
+  --color-tab-group-grey-text: var(--color-tab-group-grey);
 
-  --color-chrome-tab-group-grey-bg: #4d4e52;
-  --color-chrome-tab-group-grey-text: var(--color-chrome-tab-group-grey);
+  --color-tab-group-blue-bg: #394458;
+  --color-tab-group-blue-text: var(--color-tab-group-blue);
 
-  --color-chrome-tab-group-blue-bg: #394458;
-  --color-chrome-tab-group-blue-text: var(--color-chrome-tab-group-blue);
+  --color-tab-group-red-bg: #533a3a;
+  --color-tab-group-red-text: var(--color-tab-group-red);
 
-  --color-chrome-tab-group-red-bg: #533a3a;
-  --color-chrome-tab-group-red-text: var(--color-chrome-tab-group-red);
+  --color-tab-group-yellow-bg: #564c33;
+  --color-tab-group-yellow-text: var(--color-tab-group-yellow);
 
-  --color-chrome-tab-group-yellow-bg: #564c33;
-  --color-chrome-tab-group-yellow-text: var(--color-chrome-tab-group-yellow);
+  --color-tab-group-green-bg: #37493f;
+  --color-tab-group-green-text: var(--color-tab-group-green);
 
-  --color-chrome-tab-group-green-bg: #37493f;
-  --color-chrome-tab-group-green-text: var(--color-chrome-tab-group-green);
+  --color-tab-group-pink-bg: #563a4d;
+  --color-tab-group-pink-text: var(--color-tab-group-pink);
 
-  --color-chrome-tab-group-pink-bg: #563a4d;
-  --color-chrome-tab-group-pink-text: var(--color-chrome-tab-group-pink);
+  --color-tab-group-purple-bg: #483958;
+  --color-tab-group-purple-text: var(--color-tab-group-purple);
 
-  --color-chrome-tab-group-purple-bg: #483958;
-  --color-chrome-tab-group-purple-text: var(--color-chrome-tab-group-purple);
+  --color-tab-group-cyan-bg: #354d55;
+  --color-tab-group-cyan-text: var(--color-tab-group-cyan);
 
-  --color-chrome-tab-group-cyan-bg: #354d55;
-  --color-chrome-tab-group-cyan-text: var(--color-chrome-tab-group-cyan);
-
-  --color-chrome-tab-group-orange-bg: #564236;
-  --color-chrome-tab-group-orange-text: var(--color-chrome-tab-group-orange);
+  --color-tab-group-orange-bg: #564236;
+  --color-tab-group-orange-text: var(--color-tab-group-orange);
 }

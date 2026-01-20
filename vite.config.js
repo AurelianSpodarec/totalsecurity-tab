@@ -12,6 +12,11 @@ export default defineConfig({
     copyManifest(),
     tailwindcss()
   ],
+  resolve: {
+    alias: {
+      "@packages/settings": resolve("packages/settings/index.ts"),
+    },
+  },
   build: {
     outDir: "build",
     sourcemap: true,
