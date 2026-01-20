@@ -1,15 +1,10 @@
 import { Html } from "@packages/utility";
-import { BarChartIcon, GearIcon } from "@radix-ui/react-icons";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useShortcut } from "@packages/keyboard";
+import { useEffect, useRef, useState } from "react";
 import { SettingsAccordionItem } from "./SettingsAccordionItem";
-import { AnalyticsSettingsSection, ThemesSettingsSection } from "./SettingsModalContent";
 import { SettingsModalHeader } from "./SettingsModalHeader";
-import type { SettingsTab, SettingsTabId } from "./types";
-
-const SETTINGS_TABS = [
-  { id: "themes", label: "Themes", icon: <GearIcon /> },
-  { id: "analytics", label: "Analytics", icon: <BarChartIcon /> },
-] satisfies Array<SettingsTab>;
+import { SETTINGS_SECTIONS } from "./sections/sections";
+import type { SettingsTabId } from "./types";
 
 type SettingsModalProps = {
   open: boolean;
@@ -17,26 +12,18 @@ type SettingsModalProps = {
 };
 
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
-  // Expand "Themes" by default so the modal isn't empty on first open.
-  const [expandedSections, setExpandedSections] = useState<Set<SettingsTabId>>(
-    () => new Set<SettingsTabId>(["themes"])
-  );
+  const [expandedSections, setExpandedSections] = useState<Set<SettingsTabId>>(() => {
+    const defaults = SETTINGS_SECTIONS.filter((s) => s.defaultExpanded).map((s) => s.id);
+    return new Set<SettingsTabId>(defaults);
+  });
   const firstSectionButtonRef = useRef<HTMLButtonElement>(null);
 
-  const tabs = useMemo(() => SETTINGS_TABS, []);
+  useShortcut("Escape", onClose, { scope: "modal", enabled: open });
 
   useEffect(() => {
     if (!open) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
     firstSectionButtonRef.current?.focus();
-
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -72,18 +59,17 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
         <main className={Html.joinClasses("flex-1", "min-h-0", "overflow-y-auto")}>
           <div className={Html.joinClasses("flex flex-col")}>
-            {tabs.map((tab, index) => (
+            {SETTINGS_SECTIONS.map((section, index) => (
               <SettingsAccordionItem
-                key={tab.id}
-                id={tab.id}
-                title={tab.label}
-                icon={tab.icon}
-                isExpanded={expandedSections.has(tab.id)}
-                onToggle={() => toggleSection(tab.id)}
+                key={section.id}
+                id={section.id}
+                title={section.label}
+                icon={section.icon}
+                isExpanded={expandedSections.has(section.id)}
+                onToggle={() => toggleSection(section.id)}
                 headerButtonRef={index === 0 ? firstSectionButtonRef : undefined}
               >
-                {tab.id === "themes" ? <ThemesSettingsSection /> : null}
-                {tab.id === "analytics" ? <AnalyticsSettingsSection /> : null}
+                <section.Content />
               </SettingsAccordionItem>
             ))}
           </div>

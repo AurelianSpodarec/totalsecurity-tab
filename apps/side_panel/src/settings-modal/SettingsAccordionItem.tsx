@@ -1,6 +1,6 @@
-import { Html } from "@packages/utility";
 import type { ReactNode, RefObject } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { Html } from "@packages/utility";
 
 type SettingsAccordionItemProps = {
   id: string;
@@ -23,7 +23,6 @@ function Chevron({ expanded }: ChevronProps) {
       className={Html.joinClasses(
         "shrink-0",
         "size-4",
-        // Darker in light mode so it doesn't disappear against a white background.
         "text-gray-700 dark:text-gray-200",
         "transition-transform duration-200",
         expanded ? "rotate-0" : "-rotate-90"
@@ -79,7 +78,7 @@ export function SettingsAccordionItem({
         <span className={Html.joinClasses("min-w-0", "flex items-center gap-2")}
         >
           {icon ? (
-            <span aria-hidden className={Html.joinClasses("shrink-0", "text-gray-700 dark:text-gray-200")}>
+            <span aria-hidden className={Html.joinClasses("shrink-0",  "size-4", "text-gray-700 dark:text-gray-200")}>
               {icon}
             </span>
           ) : null}
@@ -103,7 +102,17 @@ export function SettingsAccordionItem({
             className="overflow-hidden"
           >
             <div className={Html.joinClasses("border-t border-gray-200 dark:border-gray-700", "p-3")}>
-              {children}
+              <div
+                className={Html.joinClasses(
+                  "rounded",
+                  "bg-gray-50 dark:bg-gray-900/30",
+                  "p-3",
+                  "text-sm",
+                  "text-gray-700 dark:text-gray-200"
+                )}
+              >
+                {children}
+              </div>
             </div>
           </motion.div>
         ) : null}
