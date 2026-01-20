@@ -1,0 +1,21 @@
+/* ============================================================================
+ * # Theme: Mocha / Components: Tab Item
+ * ============================================================================ */
+
+[data-theme="mocha"] {
+  --tmit-tab-item-bg: #313244;
+  --tmit-tab-item-bg-hover: #45475a;
+  --tmit-tab-item-bg-active: #89b4fa;
+
+  --tmit-tab-item-text: #cdd6f4;
+  --tmit-tab-item-text-active: #1e1e2e;
+
+  --tmit-tab-item-border: transparent;
+  --tmit-tab-item-border-active: transparent;
+
+  --tmit-tab-item-action-icon: var(--tmit-tab-item-text);
+  --tmit-tab-item-action-icon-active: var(--tmit-tab-item-text-active);
+  --tmit-tab-item-action-icon-pinned: #f9e2af;
+
+  --tmit-tab-item-action-icon-bg-hover: rgb(147 153 178 / 0.3);
+}

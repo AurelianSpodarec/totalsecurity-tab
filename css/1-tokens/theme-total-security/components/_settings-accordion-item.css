@@ -1,0 +1,14 @@
+/* ============================================================================
+ * # Theme: Total Security / Components: Settings Accordion Item
+ * ============================================================================ */
+
+[data-theme="total-security"] {
+  --tmit-settings-accordion-border: #374151;
+  --tmit-settings-accordion-surface: rgb(55 65 81 / 0.7);
+  --tmit-settings-accordion-surface-hover: rgb(75 85 99 / 0.4);
+  --tmit-settings-accordion-title-text: #ffffff;
+  --tmit-settings-accordion-icon-text: #e5e7eb; /* tailwind gray-200 */
+  --tmit-settings-accordion-panel-border: #374151;
+  --tmit-settings-accordion-panel-surface: rgb(17 24 39 / 0.3);
+  --tmit-settings-accordion-panel-text: #e5e7eb;
+}

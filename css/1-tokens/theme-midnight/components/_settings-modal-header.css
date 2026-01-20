@@ -1,0 +1,11 @@
+/* ============================================================================
+ * # Theme: Midnight / Components: Settings Modal Header
+ * ============================================================================ */
+
+[data-theme="midnight"] {
+  --tmit-settings-header-border: #22303c;
+  --tmit-settings-header-title-text: #ffffff;
+  --tmit-settings-header-close-bg: #22303c;
+  --tmit-settings-header-close-bg-hover: #2a3a48;
+  --tmit-settings-header-close-text: #ffffff;
+}

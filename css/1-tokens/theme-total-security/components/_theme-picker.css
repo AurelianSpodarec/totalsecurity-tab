@@ -1,0 +1,13 @@
+/* ============================================================================
+ * # Theme: Total Security / Components: Theme Picker
+ * ============================================================================ */
+
+[data-theme="total-security"] {
+  --tmit-theme-picker-desc-text: #9ca3af; /* tailwind gray-400 */
+  --tmit-theme-picker-item-border: #374151;
+  --tmit-theme-picker-item-border-selected: #3b82f6; /* tailwind blue-500 */
+  --tmit-theme-picker-item-bg-hover: rgb(31 41 55 / 0.3);
+  --tmit-theme-picker-item-text: #e5e7eb;
+  --tmit-theme-picker-item-text-selected: #ffffff;
+  --tmit-theme-picker-swatch-border: rgb(255 255 255 / 0.12);
+}

@@ -1,0 +1,54 @@
+/* ============================================================================
+ * # Theme Token Contract
+ *
+ * Purpose:
+ * - A lightweight checklist of CSS variables every theme MUST define.
+ * - Keeps themes consistent as new components/tokens are introduced.
+ *
+ * Notes:
+ * - Global defaults live in `css/1-tokens/global/**` (usually `:root` in @layer base).
+ * - Each theme MUST override these tokens under `[data-theme="<id>"] { ... }`.
+ * - If you add/remove a token in a global component file, update this contract.
+ * ============================================================================ */
+
+/* === App / Base === */
+/* --tmit-color-background */
+
+/* === Components: Tab Item (css/1-tokens/global/components/tab-item.css) === */
+/* --tmit-tab-item-bg */
+/* --tmit-tab-item-bg-hover */
+/* --tmit-tab-item-bg-active */
+/* --tmit-tab-item-text */
+/* --tmit-tab-item-text-active */
+/* --tmit-tab-item-border */
+/* --tmit-tab-item-border-active */
+/* --tmit-tab-item-action-icon */
+/* --tmit-tab-item-action-icon-active */
+/* --tmit-tab-item-action-icon-pinned */
+/* --tmit-tab-item-action-icon-bg-hover */
+
+/* === Components: Settings Modal Header (css/1-tokens/global/components/settings-modal-header.css) === */
+/* --tmit-settings-header-border */
+/* --tmit-settings-header-title-text */
+/* --tmit-settings-header-close-bg */
+/* --tmit-settings-header-close-bg-hover */
+/* --tmit-settings-header-close-text */
+
+/* === Components: Settings Accordion Item (css/1-tokens/global/components/settings-accordion-item.css) === */
+/* --tmit-settings-accordion-border */
+/* --tmit-settings-accordion-surface */
+/* --tmit-settings-accordion-surface-hover */
+/* --tmit-settings-accordion-title-text */
+/* --tmit-settings-accordion-icon-text */
+/* --tmit-settings-accordion-panel-border */
+/* --tmit-settings-accordion-panel-surface */
+/* --tmit-settings-accordion-panel-text */
+
+/* === Components: Theme Picker (css/1-tokens/global/components/theme-picker.css) === */
+/* --tmit-theme-picker-desc-text */
+/* --tmit-theme-picker-item-border */
+/* --tmit-theme-picker-item-border-selected */
+/* --tmit-theme-picker-item-bg-hover */
+/* --tmit-theme-picker-item-text */
+/* --tmit-theme-picker-item-text-selected */
+/* --tmit-theme-picker-swatch-border */

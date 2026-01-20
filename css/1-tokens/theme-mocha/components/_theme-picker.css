@@ -1,0 +1,13 @@
+/* ============================================================================
+ * # Theme: Mocha / Components: Theme Picker
+ * ============================================================================ */
+
+[data-theme="mocha"] {
+  --tmit-theme-picker-desc-text: #a6adc8;
+  --tmit-theme-picker-item-border: #45475a;
+  --tmit-theme-picker-item-border-selected: #89b4fa;
+  --tmit-theme-picker-item-bg-hover: rgb(69 71 90 / 0.3);
+  --tmit-theme-picker-item-text: #cdd6f4;
+  --tmit-theme-picker-item-text-selected: #ffffff;
+  --tmit-theme-picker-swatch-border: rgb(255 255 255 / 0.12);
+}

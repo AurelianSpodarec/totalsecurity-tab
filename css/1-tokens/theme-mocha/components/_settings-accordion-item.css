@@ -1,0 +1,14 @@
+/* ============================================================================
+ * # Theme: Mocha / Components: Settings Accordion Item
+ * ============================================================================ */
+
+[data-theme="mocha"] {
+  --tmit-settings-accordion-border: #45475a;
+  --tmit-settings-accordion-surface: rgb(49 50 68 / 0.7);
+  --tmit-settings-accordion-surface-hover: rgb(69 71 90 / 0.4);
+  --tmit-settings-accordion-title-text: #cdd6f4;
+  --tmit-settings-accordion-icon-text: #a6adc8;
+  --tmit-settings-accordion-panel-border: #45475a;
+  --tmit-settings-accordion-panel-surface: rgb(30 30 46 / 0.3);
+  --tmit-settings-accordion-panel-text: #cdd6f4;
+}

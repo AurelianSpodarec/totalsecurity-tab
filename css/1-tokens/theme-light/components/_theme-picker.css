@@ -1,0 +1,13 @@
+/* ============================================================================
+ * # Theme: Light / Components: Theme Picker
+ * ============================================================================ */
+
+[data-theme="light"] {
+  --tmit-theme-picker-desc-text: #6b7280;
+  --tmit-theme-picker-item-border: #e5e7eb;
+  --tmit-theme-picker-item-border-selected: #0969da;
+  --tmit-theme-picker-item-bg-hover: rgb(255 255 255 / 0.7);
+  --tmit-theme-picker-item-text: #1f2937;
+  --tmit-theme-picker-item-text-selected: #111827;
+  --tmit-theme-picker-swatch-border: rgb(0 0 0 / 0.1);
+}

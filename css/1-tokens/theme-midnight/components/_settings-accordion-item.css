@@ -1,0 +1,14 @@
+/* ============================================================================
+ * # Theme: Midnight / Components: Settings Accordion Item
+ * ============================================================================ */
+
+[data-theme="midnight"] {
+  --tmit-settings-accordion-border: #22303c;
+  --tmit-settings-accordion-surface: rgb(25 39 52 / 0.7);
+  --tmit-settings-accordion-surface-hover: rgb(34 48 60 / 0.4);
+  --tmit-settings-accordion-title-text: #ffffff;
+  --tmit-settings-accordion-icon-text: #8899ac;
+  --tmit-settings-accordion-panel-border: #22303c;
+  --tmit-settings-accordion-panel-surface: rgb(0 0 0 / 0.15);
+  --tmit-settings-accordion-panel-text: #e7e9ea;
+}

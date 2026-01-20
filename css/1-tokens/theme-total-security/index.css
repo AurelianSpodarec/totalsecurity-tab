@@ -5,48 +5,8 @@
  * Swapping themes becomes a single attribute change on the document root.
  * ============================================================================ */
 
-[data-theme="total-security"] {
-  --tmit-color-background: #1f2937;
-
-  --tmit-tab-item-bg: #374151; /* tailwind gray-700 */
-  --tmit-tab-item-bg-hover: #6b7280; /* tailwind gray-500 */
-  --tmit-tab-item-bg-active: #3b82f6; /* tailwind blue-500 */
-
-  --tmit-tab-item-text: #ffffff;
-  --tmit-tab-item-text-active: #ffffff;
-
-  --tmit-tab-item-border: transparent;
-  --tmit-tab-item-border-active: transparent;
-
-  --tmit-tab-item-action-icon: #ffffff;
-  --tmit-tab-item-action-icon-active: #ffffff;
-  --tmit-tab-item-action-icon-pinned: #3b82f6; /* tailwind blue-500 */
-
-  --tmit-tab-item-action-icon-bg-hover: rgb(156 163 175 / 0.3);
-
-  /* Settings Modal Header */
-  --tmit-settings-header-border: #374151; /* tailwind gray-700 */
-  --tmit-settings-header-title-text: #ffffff;
-  --tmit-settings-header-close-bg: #374151;
-  --tmit-settings-header-close-bg-hover: #4b5563; /* tailwind gray-600 */
-  --tmit-settings-header-close-text: #ffffff;
-
-  /* Settings Accordion Item */
-  --tmit-settings-accordion-border: #374151;
-  --tmit-settings-accordion-surface: rgb(55 65 81 / 0.7);
-  --tmit-settings-accordion-surface-hover: rgb(75 85 99 / 0.4);
-  --tmit-settings-accordion-title-text: #ffffff;
-  --tmit-settings-accordion-icon-text: #e5e7eb; /* tailwind gray-200 */
-  --tmit-settings-accordion-panel-border: #374151;
-  --tmit-settings-accordion-panel-surface: rgb(17 24 39 / 0.3);
-  --tmit-settings-accordion-panel-text: #e5e7eb;
-
-  /* Theme Picker */
-  --tmit-theme-picker-desc-text: #9ca3af; /* tailwind gray-400 */
-  --tmit-theme-picker-item-border: #374151;
-  --tmit-theme-picker-item-border-selected: #3b82f6; /* tailwind blue-500 */
-  --tmit-theme-picker-item-bg-hover: rgb(31 41 55 / 0.3);
-  --tmit-theme-picker-item-text: #e5e7eb;
-  --tmit-theme-picker-item-text-selected: #ffffff;
-  --tmit-theme-picker-swatch-border: rgb(255 255 255 / 0.12);
-}
+@import "./components/_base.css";
+@import "./components/_tab-item.css";
+@import "./components/_settings-modal-header.css";
+@import "./components/_settings-accordion-item.css";
+@import "./components/_theme-picker.css";

@@ -1,0 +1,11 @@
+/* ============================================================================
+ * # Theme: Light / Components: Settings Modal Header
+ * ============================================================================ */
+
+[data-theme="light"] {
+  --tmit-settings-header-border: #e5e7eb;
+  --tmit-settings-header-title-text: #111827;
+  --tmit-settings-header-close-bg: #e5e7eb;
+  --tmit-settings-header-close-bg-hover: #d1d5db;
+  --tmit-settings-header-close-text: #111827;
+}

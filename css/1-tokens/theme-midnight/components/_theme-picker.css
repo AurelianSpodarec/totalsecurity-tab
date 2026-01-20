@@ -1,0 +1,13 @@
+/* ============================================================================
+ * # Theme: Midnight / Components: Theme Picker
+ * ============================================================================ */
+
+[data-theme="midnight"] {
+  --tmit-theme-picker-desc-text: #8899ac;
+  --tmit-theme-picker-item-border: #22303c;
+  --tmit-theme-picker-item-border-selected: #1d9bf0;
+  --tmit-theme-picker-item-bg-hover: rgb(34 48 60 / 0.3);
+  --tmit-theme-picker-item-text: #e7e9ea;
+  --tmit-theme-picker-item-text-selected: #ffffff;
+  --tmit-theme-picker-swatch-border: rgb(255 255 255 / 0.12);
+}

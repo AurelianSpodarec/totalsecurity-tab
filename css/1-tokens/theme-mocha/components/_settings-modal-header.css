@@ -1,0 +1,11 @@
+/* ============================================================================
+ * # Theme: Mocha / Components: Settings Modal Header
+ * ============================================================================ */
+
+[data-theme="mocha"] {
+  --tmit-settings-header-border: #45475a;
+  --tmit-settings-header-title-text: #cdd6f4;
+  --tmit-settings-header-close-bg: #45475a;
+  --tmit-settings-header-close-bg-hover: #585b70;
+  --tmit-settings-header-close-text: #cdd6f4;
+}

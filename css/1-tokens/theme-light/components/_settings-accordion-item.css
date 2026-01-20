@@ -1,0 +1,14 @@
+/* ============================================================================
+ * # Theme: Light / Components: Settings Accordion Item
+ * ============================================================================ */
+
+[data-theme="light"] {
+  --tmit-settings-accordion-border: #e5e7eb;
+  --tmit-settings-accordion-surface: rgb(255 255 255 / 0.7);
+  --tmit-settings-accordion-surface-hover: #f9fafb;
+  --tmit-settings-accordion-title-text: #111827;
+  --tmit-settings-accordion-icon-text: #374151;
+  --tmit-settings-accordion-panel-border: #e5e7eb;
+  --tmit-settings-accordion-panel-surface: #f9fafb;
+  --tmit-settings-accordion-panel-text: #374151;
+}

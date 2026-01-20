@@ -1,0 +1,21 @@
+/* ============================================================================
+ * # Theme: Total Security / Components: Tab Item
+ * ============================================================================ */
+
+[data-theme="total-security"] {
+  --tmit-tab-item-bg: #374151; /* tailwind gray-700 */
+  --tmit-tab-item-bg-hover: #6b7280; /* tailwind gray-500 */
+  --tmit-tab-item-bg-active: #3b82f6; /* tailwind blue-500 */
+
+  --tmit-tab-item-text: #ffffff;
+  --tmit-tab-item-text-active: #ffffff;
+
+  --tmit-tab-item-border: transparent;
+  --tmit-tab-item-border-active: transparent;
+
+  --tmit-tab-item-action-icon: #ffffff;
+  --tmit-tab-item-action-icon-active: #ffffff;
+  --tmit-tab-item-action-icon-pinned: #3b82f6; /* tailwind blue-500 */
+
+  --tmit-tab-item-action-icon-bg-hover: rgb(156 163 175 / 0.3);
+}

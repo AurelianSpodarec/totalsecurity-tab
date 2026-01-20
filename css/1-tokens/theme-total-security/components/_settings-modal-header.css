@@ -1,0 +1,11 @@
+/* ============================================================================
+ * # Theme: Total Security / Components: Settings Modal Header
+ * ============================================================================ */
+
+[data-theme="total-security"] {
+  --tmit-settings-header-border: #374151; /* tailwind gray-700 */
+  --tmit-settings-header-title-text: #ffffff;
+  --tmit-settings-header-close-bg: #374151;
+  --tmit-settings-header-close-bg-hover: #4b5563; /* tailwind gray-600 */
+  --tmit-settings-header-close-text: #ffffff;
+}
