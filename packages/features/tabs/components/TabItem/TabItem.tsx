@@ -55,7 +55,10 @@ export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProp
           alt={`${title} favicon`}
           className="pointer-events-none shrink-0"
         />
-        <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-left tmit-fade-right-actions" title={title}>
+        <span
+          className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-left tmit-mask-fade-out-right-actions"
+          title={title}
+        >
           {title}
         </span>
       </div>
@@ -66,7 +69,7 @@ export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProp
             "absolute inset-y-0 right-0",
             "z-10",
             "flex items-center",
-            "bg-inherit tmit-fade-left-actions",
+            "bg-inherit tmit-mask-fade-in-left-actions",
             "pl-4 pr-3",
             "rounded-r",
             "transition-opacity duration-150",

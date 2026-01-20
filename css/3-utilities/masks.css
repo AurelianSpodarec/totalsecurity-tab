@@ -1,0 +1,66 @@
+/* ============================================================================
+ * # Utilities: Masks
+ * ============================================================================ */
+
+@layer utilities {
+  .tmit-app-bg {
+    background-color: var(--tmit-color-background);
+  }
+
+  .tmit-mask-fade-out-right,
+  .tmit-fade-right {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 85%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 85%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .tmit-mask-fade-out-right-actions,
+  .tmit-fade-right-actions {
+    --tmit-fade-right-actions-width: 72px;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) calc(100% - var(--tmit-fade-right-actions-width)),
+      rgba(0, 0, 0, 0) 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) calc(100% - var(--tmit-fade-right-actions-width)),
+      rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .tmit-mask-fade-in-left-actions,
+  .tmit-fade-left-actions {
+    --tmit-fade-left-actions-width: 16px;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) var(--tmit-fade-left-actions-width),
+      rgba(0, 0, 0, 1) 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 1) var(--tmit-fade-left-actions-width),
+      rgba(0, 0, 0, 1) 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+}
