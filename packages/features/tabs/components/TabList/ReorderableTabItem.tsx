@@ -48,6 +48,7 @@ export function ReorderableTabItem({
       value={itemKey}
       as="div"
       style={{
+        width: "100%",
         overflow: "hidden",
         willChange: "height, opacity",
         marginBottom: itemSpacing,

@@ -60,7 +60,7 @@ export function ReorderableGroupHeader({
     <Reorder.Item
       value={itemKey}
       as="div"
-      style={{ marginBottom: itemSpacing }}
+      style={{ width: "100%", marginBottom: itemSpacing }}
       onDragStart={() => handleItemDragStart(item)}
       onDragEnd={handleItemDragEnd}
     >

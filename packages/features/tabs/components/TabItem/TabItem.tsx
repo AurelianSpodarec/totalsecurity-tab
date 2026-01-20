@@ -32,7 +32,7 @@ export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProp
       onClick={onClick}
       data-tab-group-color={groupColor}
       className={Html.joinClasses(
-        "group relative flex items-center justify-between gap-3",
+        "group relative flex w-full min-w-0 items-center justify-between gap-3",
         active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
         "rounded",
         "p-3",
@@ -55,7 +55,7 @@ export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProp
           alt={`${title} favicon`}
           className="pointer-events-none shrink-0"
         />
-        <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden tmit-fade-right-actions" title={title}>
+        <span className="flex-1 min-w-0 whitespace-nowrap overflow-hidden text-left tmit-fade-right-actions" title={title}>
           {title}
         </span>
       </div>

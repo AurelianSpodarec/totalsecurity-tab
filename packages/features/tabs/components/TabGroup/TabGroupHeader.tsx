@@ -24,7 +24,8 @@ function GroupChevron({ expanded }: GroupChevronProps) {
       className={Html.joinClasses(
         "shrink-0",
         "size-4",
-        "text-gray-200",
+        // Darker in light mode so it doesn't disappear against a white background.
+        "text-gray-700 dark:text-gray-200",
         "transition-transform duration-200",
         expanded ? "rotate-0" : "-rotate-90"
       )}
@@ -66,20 +67,31 @@ export function TabGroupHeader({ title, groupColor, isExpanded = true, onToggle,
       title={resolvedTitle || "Untitled group"}
       className={Html.joinClasses(
         "group",
-        "inline-flex items-center gap-1 self-start",
+        "flex w-full min-w-0 items-center gap-1",
         "text-xs font-medium",
         "select-none cursor-pointer",
         className
       )}
       onClick={handleToggle}
     >
-      <Button aria-hidden>
+      <Button
+        aria-hidden
+        className={Html.joinClasses(
+          "inline-flex items-center justify-center",
+          "shrink-0",
+          "p-1",
+          "rounded",
+          "transition-colors",
+          "hover:bg-black/10 dark:hover:bg-white/10"
+        )}
+      >
         <GroupChevron expanded={isExpanded} />
       </Button>
 
       <div
         className={Html.joinClasses(
-          "inline-flex items-center gap-1",
+          // Keep the row full-width, but keep the "pill" sized to its content.
+          "inline-flex min-w-0 max-w-[70%] items-center justify-start gap-1",
           "rounded-md px-3 py-1"
         )}
         style={{
@@ -87,7 +99,7 @@ export function TabGroupHeader({ title, groupColor, isExpanded = true, onToggle,
           color: "var(--tab-group-text, #111827)",
         }}
       >
-        <span className="truncate max-w-[150px]">
+        <span className="truncate min-w-0 flex-1 text-left">
           {resolvedTitle || ""}
         </span>
 
