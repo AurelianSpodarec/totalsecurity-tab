@@ -24,5 +24,6 @@
 
     /* ActionIcon.tsx hover background (previously: hover:bg-gray-400/30) */
     --tmit-tab-item-action-icon-bg-hover: rgb(156 163 175 / 0.3);
+
   }
 }
