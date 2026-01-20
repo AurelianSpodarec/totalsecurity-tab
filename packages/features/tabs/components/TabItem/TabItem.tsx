@@ -33,12 +33,24 @@ export function TabItem({ tab, onClick, onPin, onClose, className }: TabItemProp
       data-tab-group-color={groupColor}
       className={Html.joinClasses(
         "group relative flex w-full min-w-0 items-center justify-between gap-3",
-        active ? "bg-blue-500 dark:bg-blue-500" : "hover:bg-gray-500 bg-gray-700 dark:bg-gray-700",
         "rounded",
         "p-3",
-        "text-base font-base text-gray-900 dark:text-white",
+        "text-base font-base",
         "transition-colors duration-150",
         "cursor-pointer",
+        "border",
+        active
+          ? Html.joinClasses(
+            "bg-[var(--tmit-tab-item-bg-active)]",
+            "text-[var(--tmit-tab-item-text-active)]",
+            "border-[color:var(--tmit-tab-item-border-active)]"
+          )
+          : Html.joinClasses(
+            "bg-[var(--tmit-tab-item-bg)]",
+            "hover:bg-[var(--tmit-tab-item-bg-hover)]",
+            "text-[var(--tmit-tab-item-text)]",
+            "border-[color:var(--tmit-tab-item-border)]"
+          ),
         className
       )}
     >

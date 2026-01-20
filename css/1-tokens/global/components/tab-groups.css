@@ -1,11 +1,5 @@
 /* ============================================================================
- * # Components: Tab group color mappings
- *
- * Maps a tab group's Chrome color (via data attribute) to component-consumable
- * contextual tokens.
- *
- * This is not an HTML reset, so it intentionally lives under tokens/components
- * rather than `2-base/`.
+ * # Components: Tab Group
  * ============================================================================ */
 
 @layer base {

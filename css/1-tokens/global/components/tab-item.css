@@ -1,0 +1,28 @@
+/* ============================================================================
+ * # Components: Tab Item
+ * ============================================================================ */
+
+@layer base {
+  /**
+   * Defaults are aligned with the "light" theme so the UI has sane values
+   * even before `[data-theme]` is applied.
+   */
+  :root {
+    --tmit-tab-item-bg: #f3f4f6; /* tailwind gray-100 */
+    --tmit-tab-item-bg-hover: #e5e7eb; /* tailwind gray-200 */
+    --tmit-tab-item-bg-active: #3b82f6; /* tailwind blue-500 */
+
+    --tmit-tab-item-text: #111827; /* tailwind gray-900 */
+    --tmit-tab-item-text-active: #ffffff;
+
+    --tmit-tab-item-border: transparent;
+    --tmit-tab-item-border-active: transparent;
+
+    --tmit-tab-item-action-icon: var(--tmit-tab-item-text);
+    --tmit-tab-item-action-icon-active: var(--tmit-tab-item-text-active);
+    --tmit-tab-item-action-icon-pinned: #3b82f6; /* tailwind blue-500 */
+
+    /* ActionIcon.tsx hover background (previously: hover:bg-gray-400/30) */
+    --tmit-tab-item-action-icon-bg-hover: rgb(156 163 175 / 0.3);
+  }
+}

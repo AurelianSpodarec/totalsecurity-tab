@@ -22,7 +22,12 @@ type PinActionIconProps = {
 function PinActionIcon({ pinned, active, onClick }: PinActionIconProps) {
   const ariaLabel = pinned ? "Unpin tab" : "Pin tab";
   const Icon = pinned ? DrawingPinFilledIcon : DrawingPinIcon;
-  const className = pinned && !active ? "text-blue-500" : "text-white";
+
+  const className = pinned && !active
+    ? "text-[var(--tmit-tab-item-action-icon-pinned)]"
+    : active
+      ? "text-[var(--tmit-tab-item-action-icon-active)]"
+      : "text-[var(--tmit-tab-item-action-icon)]";
 
   return (
     <ActionIcon

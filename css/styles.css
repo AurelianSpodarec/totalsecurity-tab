@@ -8,6 +8,7 @@
  * ============================================================================ */
 @import "./1-tokens/global/primitives/chrome-tab-groups.css";
 @import "./1-tokens/global/components/tab-groups.css";
+@import "./1-tokens/global/components/tab-item.css";
 
 /* Themes
 ------------------------------------------------------------------------------- */

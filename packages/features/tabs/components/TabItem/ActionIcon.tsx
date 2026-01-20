@@ -22,7 +22,7 @@ export function ActionIcon({ ariaLabel, className, onClick, children }: ActionIc
           "size-6",
           "rounded",
           "transition-colors duration-200",
-          "hover:bg-gray-400/30"
+          "hover:bg-[var(--tmit-tab-item-action-icon-bg-hover)]"
         )}
       />
       <span className="relative pointer-events-none">{children}</span>
